@@ -1,5 +1,9 @@
 package com.zhuzirui.brt.controller;
 
+import com.zhuzirui.brt.common.Result;
+import com.zhuzirui.brt.model.dto.UserDTO;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-10-16
  */
 @RestController
-@RequestMapping("/brt/user")
+@RequestMapping("/user")
 public class UserController {
-
+    @PostMapping("/create")
+    public Result<Boolean> createUser(@RequestBody UserDTO userDTO){
+        return null;
+    }
 }

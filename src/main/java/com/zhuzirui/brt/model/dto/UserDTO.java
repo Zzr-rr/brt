@@ -1,14 +1,7 @@
 package com.zhuzirui.brt.model.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,7 +18,7 @@ public class UserDTO {
     private Integer userId;
     private String username;
     private String email;
-    private String passwordHash;
+    private String password;
     private String phoneNumber;
     private String profileImage;
     private String firstName;
@@ -45,4 +38,5 @@ public class UserDTO {
     private String preferences;
     private String bio;
     private Boolean isDeleted;
+    private String code;
 }
