@@ -18,8 +18,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @PostMapping("/create")
-    public Result<Boolean> createUser(@RequestBody UserDTO userDTO){
-        return null;
-    }
 }

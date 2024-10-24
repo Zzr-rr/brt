@@ -27,7 +27,7 @@ public class User implements Serializable {
      * 主键，自增用户唯一ID
      */
     @TableId(value = "user_id", type = IdType.AUTO)
-    private Integer userId;
+    private Long userId;
 
     /**
      * 用户名，唯一，用于登录
