@@ -1,5 +1,6 @@
 package com.zhuzirui.brt.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhuzirui.brt.model.entity.User;
 import com.zhuzirui.brt.dao.UserMapper;
 import com.zhuzirui.brt.service.UserService;
@@ -22,11 +23,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
 
     @Override
-    public Long saveUser(User user) {
+    public Long saveUser(User user) throws Exception {
         int insert = userMapper.insert(user);
-        if (insert > 0) {
-            return user.getUserId();
+        if (insert != 1) {
+            throw new Exception("saved failed");
         }
-        return null;
+        return user.getUserId();
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", email);
+        return userMapper.selectOne(queryWrapper);
     }
 }

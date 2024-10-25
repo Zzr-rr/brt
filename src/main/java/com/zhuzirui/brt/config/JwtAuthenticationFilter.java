@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Component
 @Log4j2
@@ -36,8 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (cookie.getName().equals("jwt")) {
                     String jwtToken = cookie.getValue();
                     try {
-                        jwtUtil.extractAllClaims(jwtToken);
+                        Claims claims = jwtUtil.extractAllClaims(jwtToken);
                         filterChain.doFilter(request, response);
+                        break;
                         // maybe you can store some information here.
                     } catch (ExpiredJwtException e) {
                         log.info("Jwt token expired");
@@ -46,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         response.getWriter().write("{\"error\": \"JWT token expired\"}");
                         return;
                     } catch (Exception e) {
-                        log.info("Unable to extract username from token");
+                        log.info("Unable to extract from token");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.setContentType("application/json");
                         response.getWriter().write("{\"error\": \"Invalid JWT token\"}");
