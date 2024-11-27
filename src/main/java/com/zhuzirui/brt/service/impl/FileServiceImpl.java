@@ -4,6 +4,7 @@ import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.dao.FileMapper;
 import com.zhuzirui.brt.service.FileService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
 
+    @Autowired
+    private FileMapper fileMapper;
+
+    @Override
+    public boolean saveFile(File file) {
+        int result = this.getBaseMapper().insert(file);
+        if (result < 1) {
+            return false;
+        }
+        return true;
+    }
 }

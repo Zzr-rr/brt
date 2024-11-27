@@ -18,4 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    @PostMapping("/create")
+    public Result<Boolean> create() {
+        return null;
+    }
+    @PostMapping("/delete")
+    public Result<Boolean> delete() {
+        return null;
+    }
+    @PostMapping("/update")
+    public Result<Boolean> update() {
+        return null;
+    }
+    @PostMapping("/list")
+    public Result<Boolean> list() {
+        return null;
+    }
 }
