@@ -25,7 +25,9 @@ public class FileUploadServiceLocalImpl implements FileUploadService {
         //获取文件原始名称
         String originalFilename = file.getOriginalFilename();
         //获取文件的类型
-        String type = file.getContentType();
+//        String type = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+//        System.out.println(originalFilename);
 
         //获取文件
         File uploadParentFile = new File(fileUploadPath);
@@ -37,10 +39,10 @@ public class FileUploadServiceLocalImpl implements FileUploadService {
         //定义一个文件唯一标识码（UUID）
         String uuid = UUID.randomUUID().toString();
 
-        File uploadFile = new File(fileUploadPath + uuid + "." + type);
+        File uploadFile = new File(fileUploadPath + uuid + "_" + originalFilename);
         //将临时文件转存到指定磁盘位置
         file.transferTo(uploadFile);
 
-        return downloadBaseUrl + uuid + "." + type;
+        return downloadBaseUrl + uuid + "_" + originalFilename;
     }
 }

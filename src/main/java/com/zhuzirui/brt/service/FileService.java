@@ -16,4 +16,5 @@ import java.util.List;
  */
 public interface FileService extends IService<File> {
     boolean saveFile(File file);
+    File getFileById(Integer id);
 }

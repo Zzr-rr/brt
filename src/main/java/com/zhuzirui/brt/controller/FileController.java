@@ -7,15 +7,26 @@ import com.zhuzirui.brt.model.dto.FileDTO;
 import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.service.FileService;
 import com.zhuzirui.brt.service.FileUploadService;
+import com.zhuzirui.brt.service.impl.FileDownloadServiceLocalImpl;
 import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -41,13 +52,16 @@ public class FileController {
     FileUploadService fileUploadService;
 
     @Autowired
+    FileDownloadServiceLocalImpl fileDownloadService;
+
+    @Autowired
     FileStructMapper fileStructMapper;
 
     @Autowired
     JwtUtil jwtUtil;
 
     @PostMapping("/create")
-    public Result<FileDTO> create(@RequestBody FileDTO fileDTO, @RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
+    public Result<FileDTO> create(@Validated FileDTO fileDTO, @RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
         // 调用方法从 Cookie 中获取 JWT Token
         String jwtToken = getJwtTokenFromCookie(request);
 
@@ -81,7 +95,8 @@ public class FileController {
             fileDTO.setIsPublic(false);
             fileDTO.setIsDeleted(false);
         } catch (IOException e) {
-            return Result.error(500, "Failed to save file");
+            e.printStackTrace();
+            return Result.error(500, "Failed to save file.");
         }
 
         File file = fileStructMapper.dtoToEntity(fileDTO);
@@ -93,8 +108,42 @@ public class FileController {
     }
 
 
+
+    //文件下载本地接口
+    @GetMapping("/download/{fileName}")
+    public ResponseEntity<Resource> download(@PathVariable String fileName, HttpServletResponse response) throws IOException {
+        java.io.File file = fileDownloadService.downloadFile(fileName);
+        if (file == null || !file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource = new UrlResource(file.toURI());
+        if (!resource.exists() || !resource.isReadable()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // 设置Content-Type，这里可以根据文件类型来设置
+        String contentType = Files.probeContentType(file.toPath());
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        // 设置Content-Disposition，这将告诉浏览器这是一个文件下载响应
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
+    }
+
+
     @PostMapping("/delete")
-    public Result<Boolean> delete() {
+    public Result<Boolean> delete(@RequestBody Integer fileId) {
+        File file = fileService.getById(fileId);
+        if(file == null) return Result.error(200, "File not found");
+
         return null;
     }
     @PostMapping("/update")

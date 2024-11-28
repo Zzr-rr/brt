@@ -1,5 +1,6 @@
 package com.zhuzirui.brt.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.dao.FileMapper;
 import com.zhuzirui.brt.service.FileService;
@@ -28,5 +29,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             return false;
         }
         return true;
+    }
+
+    @Override
+    public File getFileById(Integer id) {
+        QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
+        queryWrapper.eq("id", id);
+        return fileMapper.selectOne(queryWrapper);
     }
 }
