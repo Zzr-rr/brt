@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -35,7 +37,24 @@ public class JwtUtil {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    public Long extractUserId(String token) {
-        return Long.parseLong(extractAllClaims(token).getSubject());
+    public Integer extractUserId(String token) {
+        return Integer.parseInt(extractAllClaims(token).getSubject());
+    }
+
+    /**
+     * 从请求的Cookie中获取JWT Token。
+     * @param request HTTP请求对象
+     * @return JWT Token值，如果没有找到则返回null
+     */
+    public static String getJwtTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

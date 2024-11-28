@@ -1,10 +1,16 @@
 spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://123.56.138.30:3306/brt
+#    type: com.mysql.cj.jdbc.MysqlDataSource
+#    username: root
+#    password: root123
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://123.56.138.30:3306/brt
+    url: jdbc:mysql://localhost:3306/brt?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
     type: com.mysql.cj.jdbc.MysqlDataSource
     username: root
-    password: root123
+    password: 123456
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -12,3 +18,8 @@ mybatis-plus:
     db-config:
       logic-delete-field: 1
       logic-not-delete-value: 0
+files:
+  upload:
+    base-path: D:/xz/WS/temp/upload
+  download:
+    base-url: http://localhost:1234/download
