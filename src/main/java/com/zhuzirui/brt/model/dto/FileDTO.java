@@ -22,20 +22,19 @@ import java.time.LocalDateTime;
 @Data
 public class FileDTO {
     private Integer fileId;
-
     private Integer userId;
 
+    //允许修改
     private String fileName;
-    private String fileType;
+    private Boolean isPublic;
     private String keywords;
+    private LocalDateTime updatedAt;
 
+    private String fileType;
     private String fileUrl;
 
     private LocalDateTime uploadTime;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    private Boolean isPublic;
 
     private Boolean isDeleted;
 }

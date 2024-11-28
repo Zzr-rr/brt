@@ -1,5 +1,6 @@
 package com.zhuzirui.brt.service;
 
+import com.zhuzirui.brt.model.dto.FileDTO;
 import com.zhuzirui.brt.model.entity.File;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhuzirui.brt.model.entity.QuestionBank;
@@ -16,5 +17,8 @@ import java.util.List;
  */
 public interface FileService extends IService<File> {
     boolean saveFile(File file);
-    File getFileById(Integer id);
+    void deleteFile(File file);
+    List<File> listFiles(Integer userId,FileDTO fileDTO);
+    File getFileByFileId(Integer fileId);
+    void updateFile(FileDTO fileDTO);
 }

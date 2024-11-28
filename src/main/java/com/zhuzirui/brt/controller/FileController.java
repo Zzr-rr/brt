@@ -5,8 +5,11 @@ import com.zhuzirui.brt.dao.FileMapper;
 import com.zhuzirui.brt.mapper.FileStructMapper;
 import com.zhuzirui.brt.model.dto.FileDTO;
 import com.zhuzirui.brt.model.entity.File;
+import com.zhuzirui.brt.model.entity.User;
+import com.zhuzirui.brt.service.FileDeleteService;
 import com.zhuzirui.brt.service.FileService;
 import com.zhuzirui.brt.service.FileUploadService;
+import com.zhuzirui.brt.service.UserService;
 import com.zhuzirui.brt.service.impl.FileDownloadServiceLocalImpl;
 import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -55,11 +58,18 @@ public class FileController {
     FileDownloadServiceLocalImpl fileDownloadService;
 
     @Autowired
+    FileDeleteService fileDeleteService;
+
+    @Autowired
     FileStructMapper fileStructMapper;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     JwtUtil jwtUtil;
 
+    //上传文件
     @PostMapping("/create")
     public Result<FileDTO> create(@Validated FileDTO fileDTO, @RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
         // 调用方法从 Cookie 中获取 JWT Token
@@ -103,6 +113,7 @@ public class FileController {
 
         boolean result = fileService.saveFile(file);
 
+        fileDTO = fileStructMapper.entityToDto(file);
         if(result) return Result.success(fileDTO);
         else return Result.error(500, "Failed to save file");
     }
@@ -138,24 +149,98 @@ public class FileController {
                 .body(resource);
     }
 
-
+    //根据fileId删除文件
     @PostMapping("/delete")
-    public Result<Boolean> delete(@RequestBody Integer fileId) {
-        File file = fileService.getById(fileId);
+    public Result<Boolean> delete(@RequestBody FileDTO fileDTO, HttpServletRequest request) {
+        File file = fileService.getById(fileDTO.getFileId());
         if(file == null) return Result.error(200, "File not found");
 
-        return null;
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if(user == null) return Result.error(401, "User ID cannot be determined from JWT");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "User ID cannot be determined from JWT");
+        }
+        if(!userId.equals(file.getUserId())) {
+            return Result.error(401, "Access denied");
+        }
+
+        //删除文件本地实现
+        String fileUrl = file.getFileUrl();
+        boolean result = false;
+        try{
+            result = fileDeleteService.deleteFile(fileUrl);
+        }catch (IOException e){
+            e.printStackTrace();
+            return Result.error(500, "Failed to delete file");
+        }
+        if(result){
+            //删除对应文件表行
+            fileService.deleteFile(file);
+            return Result.success(true);
+        }
+        else return Result.error(500, "Failed to delete file");
     }
+
     @PostMapping("/update")
-    public Result<Boolean> update() {
-        return null;
+    public Result<Boolean> update(@RequestBody FileDTO fileDTO, HttpServletRequest request) {
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if(user == null) return Result.error(401, "User ID cannot be determined from JWT");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "User ID cannot be determined from JWT");
+        }
+
+        //验证文件归属
+        Integer fileId = fileDTO.getFileId();
+        File file = fileService.getFileByFileId(fileId);
+        if(file == null) return Result.error(404, "File not found");
+        if(!file.getUserId().equals(userId)) return Result.error(401, "Access denied");
+
+        if(fileDTO.getIsPublic()==null && fileDTO.getFileName()==null && fileDTO.getKeywords()==null)
+            return Result.error(500, "Nothing to update");
+
+        fileService.updateFile(fileDTO);
+        return Result.success(true);
     }
+
     @PostMapping("/list")
-    public Result<Boolean> list() {
-        return null;
+    public Result<List<File>> list(@Validated FileDTO fileDTO,HttpServletRequest request) {
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if(user == null) return Result.error(401, "User ID cannot be determined from JWT");
+
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "User ID cannot be determined from JWT");
+        }
+
+        return Result.success(fileService.listFiles(userId,fileDTO));
     }
+
     @PostMapping("/generate")
     public Result<Boolean> generate() {
         return null;
     }
+
 }

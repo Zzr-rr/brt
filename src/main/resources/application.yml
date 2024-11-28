@@ -20,6 +20,8 @@ mybatis-plus:
     db-config:
       logic-delete-field: 1
       logic-not-delete-value: 0
+
+
 files:
   upload:
     base-path: D:/xz/WS/temp/upload/

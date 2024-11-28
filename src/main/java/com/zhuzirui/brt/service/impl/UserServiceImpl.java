@@ -32,6 +32,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public User getUserByUserId(Integer userId) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public User getByEmail(String email) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
