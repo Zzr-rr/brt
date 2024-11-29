@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -23,6 +24,8 @@ import java.util.List;
  */
 @Service
 public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
+
+    private static final Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
 
     @Autowired
     private FileMapper fileMapper;
@@ -50,7 +53,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public List<File> listFiles(FileDTO fileDTO) {
-        System.out.println("in function listFiles:\n"+fileDTO.toString());
+        logger.info("in listFiles:\n"+fileDTO.toString());
 
         QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
 
