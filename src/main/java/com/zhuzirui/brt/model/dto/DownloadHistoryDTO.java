@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @Data
 public class DownloadHistoryDTO {
     private Integer downloadId;
+
     private Integer userId;
     private Integer fileId;
     private LocalDateTime downloadTime;

@@ -26,4 +26,4 @@ files:
   upload:
     base-path: D:/xz/WS/temp/upload/
   download:
-    base-url: http://localhost:8080/brt/file/download/
+    base-url: http://60.204.136.225:6000/brt/file/download/

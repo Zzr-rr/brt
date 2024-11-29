@@ -1,5 +1,6 @@
 package com.zhuzirui.brt.service;
 
+import com.zhuzirui.brt.model.dto.DownloadHistoryDTO;
 import com.zhuzirui.brt.model.entity.DownloadHistory;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-10-16
  */
 public interface DownloadHistoryService extends IService<DownloadHistory> {
-
+    Integer saveDownloadHistory(DownloadHistory downloadHistory) throws Exception;
 }

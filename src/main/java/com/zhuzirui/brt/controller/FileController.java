@@ -1,15 +1,16 @@
 package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
+import com.zhuzirui.brt.dao.DownloadHistoryMapper;
 import com.zhuzirui.brt.dao.FileMapper;
+import com.zhuzirui.brt.mapper.DownloadHistoryStructMapper;
 import com.zhuzirui.brt.mapper.FileStructMapper;
+import com.zhuzirui.brt.model.dto.DownloadHistoryDTO;
 import com.zhuzirui.brt.model.dto.FileDTO;
+import com.zhuzirui.brt.model.entity.DownloadHistory;
 import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.model.entity.User;
-import com.zhuzirui.brt.service.FileDeleteService;
-import com.zhuzirui.brt.service.FileService;
-import com.zhuzirui.brt.service.FileUploadService;
-import com.zhuzirui.brt.service.UserService;
+import com.zhuzirui.brt.service.*;
 import com.zhuzirui.brt.service.impl.FileDownloadServiceLocalImpl;
 import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -29,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -64,26 +67,38 @@ public class FileController {
     FileStructMapper fileStructMapper;
 
     @Autowired
+    DownloadHistoryService downloadHistoryService;
+
+    @Autowired
+    DownloadHistoryMapper downloadHistoryMapper;
+
+    @Autowired
+    DownloadHistoryStructMapper downloadHistoryStructMapper;
+
+    @Autowired
     UserService userService;
 
     @Autowired
     JwtUtil jwtUtil;
+
 
     //上传文件
     @PostMapping("/create")
     public Result<FileDTO> create(@Validated FileDTO fileDTO, @RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
         // 调用方法从 Cookie 中获取 JWT Token
         String jwtToken = getJwtTokenFromCookie(request);
-
         // 检查 JWT Token 是否存在
         if (jwtToken != null && !jwtToken.isEmpty()) {
             // 使用 JwtUtil 提取用户 ID
             Integer userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getById(userId);
+            if(user == null) return Result.error(404, "User not found");
+
             // 将用户 ID 设置到 FileDTO 中
             fileDTO.setUserId(userId);
         } else {
             // 如果没有 JWT Token，返回错误信息
-            return Result.error(401, "User ID cannot be determined from JWT");
+            return Result.error(401, "Invalid JWT token");
         }
 
         String fileUrl = null;
@@ -118,35 +133,79 @@ public class FileController {
         else return Result.error(500, "Failed to save file");
     }
 
-
-
     //文件下载本地接口
     @GetMapping("/download/{fileName}")
-    public ResponseEntity<Resource> download(@PathVariable String fileName, HttpServletResponse response) throws IOException {
-        java.io.File file = fileDownloadService.downloadFile(fileName);
-        if (file == null || !file.exists()) {
+    public ResponseEntity<Resource> download(@PathVariable String fileName,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)  {
+        try{
+            java.io.File file = fileDownloadService.downloadFile(fileName);
+            if (file == null || !file.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Resource resource = new UrlResource(file.toURI());
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            //添加下载记录
+            DownloadHistoryDTO downloadHistoryDTO = new DownloadHistoryDTO();
+
+            //查找文件表
+            File fileFoundByUrl = fileService.getFileByUrlFileName(fileName);
+            if(fileFoundByUrl == null || fileFoundByUrl.getIsDeleted()) return ResponseEntity.notFound().build();
+            downloadHistoryDTO.setFileId(fileFoundByUrl.getFileId());
+
+            // 调用方法从 Cookie 中获取 JWT Token
+            String jwtToken = getJwtTokenFromCookie(request);
+            // 检查 JWT Token 是否存在
+            if (jwtToken != null && !jwtToken.isEmpty()) {
+                // 使用 JwtUtil 提取用户 ID
+                Integer userId = jwtUtil.extractUserId(jwtToken);
+                User user = userService.getById(userId);
+
+                if(user == null) return ResponseEntity.badRequest().build();
+
+                // 将用户 ID 设置到 downloadHistoryDTO 中
+                downloadHistoryDTO.setUserId(userId);
+            } else {
+                // 如果没有 JWT Token，返回错误信息
+                return ResponseEntity.badRequest().build();
+            }
+
+            downloadHistoryDTO.setIsDeleted(false);
+            downloadHistoryDTO.setDownloadTime(LocalDateTime.now());
+            DownloadHistory downloadHistory = downloadHistoryStructMapper.dtoToEntity(downloadHistoryDTO);
+
+            try {
+                downloadHistoryService.saveDownloadHistory(downloadHistory);
+            }catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.badRequest().build();
+            }
+
+            // 设置Content-Type，这里可以根据文件类型来设置
+            String contentType = Files.probeContentType(file.toPath());
+            if (contentType == null) {
+                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
+
+            // 设置Content-Disposition，这将告诉浏览器这是一个文件下载响应
+            HttpHeaders headers = new HttpHeaders();
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFileName);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+        } catch (IOException e){
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
 
-        Resource resource = new UrlResource(file.toURI());
-        if (!resource.exists() || !resource.isReadable()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // 设置Content-Type，这里可以根据文件类型来设置
-        String contentType = Files.probeContentType(file.toPath());
-        if (contentType == null) {
-            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
-
-        // 设置Content-Disposition，这将告诉浏览器这是一个文件下载响应
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(resource);
     }
 
     //根据fileId删除文件
@@ -156,17 +215,18 @@ public class FileController {
         if(file == null) return Result.error(200, "File not found");
 
         //鉴权
-        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        // 调用方法从 Cookie 中获取 JWT Token
+        String jwtToken = getJwtTokenFromCookie(request);
         Integer userId;
         // 检查 JWT Token 是否存在
         if (jwtToken != null && !jwtToken.isEmpty()) {
             // 使用 JwtUtil 提取用户 ID
             userId = jwtUtil.extractUserId(jwtToken);
             User user = userService.getUserByUserId(userId);
-            if(user == null) return Result.error(401, "User ID cannot be determined from JWT");
+            if(user == null) return Result.error(404, "User not found");
         } else {
             // 如果没有 JWT Token，返回错误信息
-            return Result.error(401, "User ID cannot be determined from JWT");
+            return Result.error(401, "Invalid JWT token");
         }
         if(!userId.equals(file.getUserId())) {
             return Result.error(401, "Access denied");
@@ -199,10 +259,10 @@ public class FileController {
             // 使用 JwtUtil 提取用户 ID
             userId = jwtUtil.extractUserId(jwtToken);
             User user = userService.getUserByUserId(userId);
-            if(user == null) return Result.error(401, "User ID cannot be determined from JWT");
+            if(user == null) return Result.error(404, "User not found");
         } else {
             // 如果没有 JWT Token，返回错误信息
-            return Result.error(401, "User ID cannot be determined from JWT");
+            return Result.error(401, "Invalid JWT token");
         }
 
         //验证文件归属
@@ -212,11 +272,12 @@ public class FileController {
         if(!file.getUserId().equals(userId)) return Result.error(401, "Access denied");
 
         if(fileDTO.getIsPublic()==null && fileDTO.getFileName()==null && fileDTO.getKeywords()==null)
-            return Result.error(500, "Nothing to update");
+            return Result.error(200, "Nothing to update");
 
         fileService.updateFile(fileDTO);
         return Result.success(true);
     }
+
 
     @PostMapping("/list")
     public Result<List<File>> list(@Validated FileDTO fileDTO,HttpServletRequest request) {
@@ -228,19 +289,14 @@ public class FileController {
             // 使用 JwtUtil 提取用户 ID
             userId = jwtUtil.extractUserId(jwtToken);
             User user = userService.getUserByUserId(userId);
-            if(user == null) return Result.error(401, "User ID cannot be determined from JWT");
+            if(user == null) return Result.error(404, "User not found");
 
         } else {
             // 如果没有 JWT Token，返回错误信息
-            return Result.error(401, "User ID cannot be determined from JWT");
+            return Result.error(401, "Invalid JWT token");
         }
 
         return Result.success(fileService.listFiles(userId,fileDTO));
-    }
-
-    @PostMapping("/generate")
-    public Result<Boolean> generate() {
-        return null;
     }
 
 }

@@ -23,11 +23,13 @@ import java.time.LocalDateTime;
 public class QuestionDTO {
     private Integer questionId;
     private Integer bankId;
+
     private String questionText;
     private String questionType;
     private String options;
     private String correctAnswer;
     private String difficulty;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;

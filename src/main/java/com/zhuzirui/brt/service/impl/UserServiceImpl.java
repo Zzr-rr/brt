@@ -22,6 +22,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private UserMapper userMapper;
 
+
     @Override
     public Long saveUser(User user) throws Exception {
         int insert = userMapper.insert(user);

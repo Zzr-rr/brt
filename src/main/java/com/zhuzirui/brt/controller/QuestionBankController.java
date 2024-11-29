@@ -1,9 +1,13 @@
 package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/brt/questionBank")
 public class QuestionBankController {
+    //根据指定文件id列表生成题库
     @PostMapping("/create")
-    public Result<Boolean> create() {
+    public Result<Boolean> create(@RequestBody List<Integer> fileId, HttpServletRequest httpServletRequest) {
+
+
         return null;
     }
     @PostMapping("/delete")

@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserService extends IService<User> {
     Long saveUser(User user) throws Exception;
-
     User getUserByUserId(Integer userId);
     User getByEmail(String email);
 }

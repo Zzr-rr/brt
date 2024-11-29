@@ -7,6 +7,7 @@ import com.zhuzirui.brt.dao.FileMapper;
 import com.zhuzirui.brt.service.FileService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Autowired
     private FileMapper fileMapper;
 
+    //文件baseUrl
+    @Value("${files.download.base-url}")
+    private String downloadBaseUrl;
+
     @Override
     public boolean saveFile(File file) {
         int result = this.getBaseMapper().insert(file);
@@ -44,9 +49,42 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     @Override
-    public List<File> listFiles(Integer userId,FileDTO fileDTO) {
+    public List<File> listFiles(Integer userId, FileDTO fileDTO) {
         QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
-        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("user_id", userId); // 总是添加用户ID条件
+
+        // 检查DTO中的属性是否非空，并添加到查询条件中
+        if (fileDTO.getFileId() != null) {
+            queryWrapper.eq("file_id", fileDTO.getFileId());
+        }
+        if (fileDTO.getFileName() != null && !fileDTO.getFileName().isEmpty()) {
+            queryWrapper.like("file_name", fileDTO.getFileName());
+        }
+        if (fileDTO.getIsPublic() != null) {
+            queryWrapper.eq("is_public", fileDTO.getIsPublic());
+        }
+        if (fileDTO.getKeywords() != null && !fileDTO.getKeywords().isEmpty()) {
+            queryWrapper.like("keywords", fileDTO.getKeywords());
+        }
+        if (fileDTO.getUpdatedAt() != null) {
+            queryWrapper.le("updated_at", fileDTO.getUpdatedAt());
+        }
+        if (fileDTO.getFileType() != null && !fileDTO.getFileType().isEmpty()) {
+            queryWrapper.eq("file_type", fileDTO.getFileType());
+        }
+        if (fileDTO.getFileUrl() != null && !fileDTO.getFileUrl().isEmpty()) {
+            queryWrapper.eq("file_url", fileDTO.getFileUrl());
+        }
+        if (fileDTO.getUploadTime() != null) {
+            queryWrapper.ge("upload_time", fileDTO.getUploadTime());
+        }
+        if (fileDTO.getCreatedAt() != null) {
+            queryWrapper.ge("created_at", fileDTO.getCreatedAt());
+        }
+        if (fileDTO.getIsDeleted() != null) {
+            queryWrapper.eq("is_deleted", fileDTO.getIsDeleted());
+        }
+
         return fileMapper.selectList(queryWrapper);
     }
 
@@ -82,5 +120,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             fileMapper.updateById(file);
         }
 
+    }
+
+    @Override
+    public boolean belongsToUser(Integer fileId, Integer userId) {
+        QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
+        queryWrapper.eq("file_id", fileId);
+        File file = fileMapper.selectOne(queryWrapper);
+        if (file == null) return false;
+        return userId.equals(file.getUserId());
+    }
+
+    @Override
+    public File getFileByUrlFileName(String urlFileName) {
+        QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
+        String fileUrl = downloadBaseUrl + urlFileName;
+        queryWrapper.eq("file_url", fileUrl);
+        return fileMapper.selectOne(queryWrapper);
     }
 }

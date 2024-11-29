@@ -23,10 +23,12 @@ import java.time.LocalDateTime;
 public class QuestionBank {
     private Integer bankId;
     private Integer userId;
+
     private String title;
     private String description;
     private Boolean isPublic;
     private String keywords;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;
