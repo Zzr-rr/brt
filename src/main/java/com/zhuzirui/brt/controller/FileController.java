@@ -279,8 +279,15 @@ public class FileController {
     }
 
 
-    @PostMapping("/list")
-    public Result<List<File>> list(@Validated FileDTO fileDTO,HttpServletRequest request) {
+    //根据指定条件筛选
+    @PostMapping("/list/{flag}")
+    public Result<List<File>> list(@RequestBody FileDTO fileDTO,HttpServletRequest request,@PathVariable String flag) {
+        //判断查询类型
+        boolean isPublic;
+        if(flag.equals("public")) isPublic = true;
+        else if(flag.equals("personal")) isPublic = false;
+        else return Result.error(401, "Invalid flag");
+
         //鉴权
         String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
         Integer userId;
@@ -289,14 +296,19 @@ public class FileController {
             // 使用 JwtUtil 提取用户 ID
             userId = jwtUtil.extractUserId(jwtToken);
             User user = userService.getUserByUserId(userId);
-            if(user == null) return Result.error(404, "User not found");
+            if(user == null && !isPublic) return Result.error(404, "User not found");
 
+            //个人查询
+            if(user != null && !isPublic) fileDTO.setUserId(userId);
+
+            //公共查询
+            if(isPublic) fileDTO.setIsPublic(true);
         } else {
             // 如果没有 JWT Token，返回错误信息
             return Result.error(401, "Invalid JWT token");
         }
 
-        return Result.success(fileService.listFiles(userId,fileDTO));
+        return Result.success(fileService.listFiles(fileDTO));
     }
 
 }

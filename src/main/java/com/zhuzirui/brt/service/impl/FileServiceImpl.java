@@ -49,11 +49,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     @Override
-    public List<File> listFiles(Integer userId, FileDTO fileDTO) {
+    public List<File> listFiles(FileDTO fileDTO) {
+        System.out.println("in function listFiles:\n"+fileDTO.toString());
+
         QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
-        queryWrapper.eq("user_id", userId); // 总是添加用户ID条件
 
         // 检查DTO中的属性是否非空，并添加到查询条件中
+        if(fileDTO.getUserId()!=null){
+            queryWrapper.eq("user_id", fileDTO.getUserId());
+        }
         if (fileDTO.getFileId() != null) {
             queryWrapper.eq("file_id", fileDTO.getFileId());
         }

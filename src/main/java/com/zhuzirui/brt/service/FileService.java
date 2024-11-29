@@ -19,7 +19,7 @@ import java.util.List;
 public interface FileService extends IService<File> {
     boolean saveFile(File file);
     void deleteFile(File file);
-    List<File> listFiles(Integer userId,FileDTO fileDTO);
+    List<File> listFiles(FileDTO fileDTO);
     File getFileByFileId(Integer fileId);
     File getFileByUrlFileName(String urlFileName);
     void updateFile(FileDTO fileDTO);
