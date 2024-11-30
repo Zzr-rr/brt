@@ -21,6 +21,15 @@ mybatis-plus:
       logic-delete-field: 1
       logic-not-delete-value: 0
 
+llm:
+  qianfan:
+    api-key: 8oDtfGdZgs5Tgtu7AkP9n3HI
+    api-secret: bdfVt1eXzoC02wyBZFKKlPePiz7CnfeT
+    model-name: Yi-34B-Chat
+  openai:
+    secret-key: <KEY>
+    model-name: <MODEL_NAME>
+
 
 files:
   upload:

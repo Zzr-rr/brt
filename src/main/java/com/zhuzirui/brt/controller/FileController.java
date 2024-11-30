@@ -7,6 +7,7 @@ import com.zhuzirui.brt.mapper.DownloadHistoryStructMapper;
 import com.zhuzirui.brt.mapper.FileStructMapper;
 import com.zhuzirui.brt.model.dto.DownloadHistoryDTO;
 import com.zhuzirui.brt.model.dto.FileDTO;
+import com.zhuzirui.brt.model.dto.QuestionDTO;
 import com.zhuzirui.brt.model.entity.DownloadHistory;
 import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.model.entity.User;
@@ -50,6 +51,8 @@ import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
 @RestController
 @RequestMapping("/brt/file")
 public class FileController {
+    @Autowired
+    QuestionExtractorService questionExtractorService;
 
     @Autowired
     FileService fileService;
@@ -309,6 +312,28 @@ public class FileController {
         }
 
         return Result.success(fileService.listFiles(fileDTO));
+    }
+
+    //test
+    @PostMapping("/test")
+    public Result<List<QuestionDTO>> test() {
+
+        List<QuestionDTO> questionDTOList = null;
+
+        try{
+            questionDTOList =  questionExtractorService.extractQuestions("百度智能云千帆大模型平台不仅提供了包括文心一言在内的多种模型,还提供了各种 AI 开发工具和完整的开发环境,使客户能够轻松使用和开发大模型应用。平台支持的模型主要分为以下几类:\n" +
+                "\n" +
+                "Embedding\n" +
+                "Chat\n" +
+                "Completion\n" +
+                "本文将重点介绍如何使用 Langchain 与千帆平台的 Chat 模型进行交互。\n"
+                );
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error(500, e.getMessage());
+        }
+
+        return Result.success(questionDTOList);
     }
 
 }

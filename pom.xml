@@ -48,6 +48,18 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-qianfan</artifactId>
+            <version>0.36.2</version>
+        </dependency>
+
         <!-- Hibernate Validator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -81,33 +93,16 @@
             <optional>true</optional>
         </dependency>
 
-
-        <!-- LangChain4j -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
-            <version>0.35.0</version>
+            <version>0.36.2</version>
         </dependency>
 
-        <!-- LangChain4j high-level AI Services API -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
-            <version>0.35.0</version>
-        </dependency>
-
-        <!-- chroma Vector DB -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-chroma</artifactId>
-            <version>0.35.0</version>
-        </dependency>
-
-        <!-- Embedding model -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-            <version>0.35.0</version>
+            <version>0.36.2</version>
         </dependency>
 
         <!-- mybatis-plus -->
@@ -160,6 +155,11 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
     </dependencies>
 
