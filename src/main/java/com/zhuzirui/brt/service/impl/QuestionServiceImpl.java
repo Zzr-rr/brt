@@ -4,6 +4,7 @@ import com.zhuzirui.brt.model.entity.Question;
 import com.zhuzirui.brt.dao.QuestionMapper;
 import com.zhuzirui.brt.service.QuestionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
 
+    @Autowired
+    private QuestionMapper questionMapper;
+
+    @Override
+    public Integer saveQuestion (Question question) throws Exception {
+        int insert = questionMapper.insert(question);
+        if (insert < 1) {
+            throw new Exception("saved failed");
+        }
+        return question.getQuestionId();
+    }
 }

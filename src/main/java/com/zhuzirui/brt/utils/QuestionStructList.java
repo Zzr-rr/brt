@@ -2,6 +2,7 @@ package com.zhuzirui.brt.utils;
 
 import com.google.gson.Gson;
 import com.zhuzirui.brt.model.dto.QuestionDTO;
+import jakarta.validation.constraints.NotBlank;
 import jdk.jfr.Description;
 import lombok.Data;
 import lombok.Getter;
@@ -60,49 +61,56 @@ class QuestionStruct{
     @Description("difficulty of the Question. Can only from 'EASY', 'MEDIUM', 'HARD'")
     private Difficulty difficulty;
 
+    private List<String> getOptionList(){
+        List<String> list = new ArrayList<>();
+        for(Option option : options){
+            list.add(option.content);
+        }
+        return list;
+    }
+
     //转换
-    public QuestionDTO toQuestionDTO(){
+    public QuestionDTO toQuestionDTO() throws Exception{
+
+        if(questionText == null || questionText.isEmpty()) throw new Exception("questionText is empty");
+
         QuestionDTO questionDTO = new QuestionDTO();
         questionDTO.setQuestionText(questionText);
         questionDTO.setQuestionType(questionType.toString());
         questionDTO.setDifficulty(difficulty.toString());
 
-        String correctAnswer = "";
+
         if(questionType == QuestionType.SINGLE_CHOICE || questionType == QuestionType.MULTIPLE_CHOICE){
             //选择题
 
-            questionDTO.setOptions(gson.toJson(options));
-            //将正确答案标号作为正确答案
-            for(int i=0; i<options.size(); i++) {
-                Option option = options.get(i);
-                if (option.isCorrect) {
-                    if(correctAnswer != "") correctAnswer += ',';
-                    correctAnswer += (char) ('A' + i);
-                }
-            }
+            if(options == null || options.isEmpty()) throw new NullPointerException("SINGLE_CHOICE / MULTIPLE_CHOICE: options is empty.");
 
-            questionDTO.setCorrectAnswer(correctAnswer);
+            questionDTO.setOptions(gson.toJson(getOptionList()));
+
+            questionDTO.setCorrectAnswer(gson.toJson(options));
         }
         else if(questionType == QuestionType.FILL_IN_THE_BLANK){
             //填空题
 
-            for(int i=0; i < blankAnswers.size(); i++) {
-                if(correctAnswer != "") correctAnswer += ',';
-                String blankAnswer = blankAnswers.get(i);
-                String modifiedAnswer = blankAnswer.replace(',','，');
-                correctAnswer += modifiedAnswer;
-            }
+            String noUse = gson.toJson("not used");
+            questionDTO.setOptions(noUse);//不需要
+
+            if(blankAnswers == null || blankAnswers.isEmpty()) throw new NullPointerException("FILL_IN_THE_BLANK: blankAnswers is empty.");
+
+            correctAnswer = gson.toJson(blankAnswers);
         }
         else{
             //简答题
 
-            questionDTO.setOptions("");//不需要
-            questionDTO.setCorrectAnswer(this.correctAnswer);
+            if(this.correctAnswer == null || this.correctAnswer.isEmpty()) throw new NullPointerException("SHORT_ANSWER: correctAnswer is empty.");
+            String noUse = gson.toJson("not used");
+            questionDTO.setOptions(noUse);//不需要
+            questionDTO.setCorrectAnswer(gson.toJson(this.correctAnswer));
         }
 
         questionDTO.setIsDeleted(false);
-        questionDTO.setCreatedAt(LocalDateTime.now());
-        questionDTO.setUpdatedAt(LocalDateTime.now());
+//        questionDTO.setCreatedAt(LocalDateTime.now());
+//        questionDTO.setUpdatedAt(LocalDateTime.now());
 
         return questionDTO;
     }
@@ -112,11 +120,24 @@ class QuestionStruct{
 public class QuestionStructList{
     private List<QuestionStruct> questionStructList;
 
+    private static final Logger logger = Logger.getLogger(QuestionStructList.class.getName());
+
     public List<QuestionDTO> toQuestionDTOList(){
         List<QuestionDTO> questionDTOList = new ArrayList<>();
+
+        logger.info("size of question struct list: " + questionStructList.size());
+
         for(QuestionStruct questionStruct : questionStructList){
-            questionDTOList.add(questionStruct.toQuestionDTO());
+            try {
+                QuestionDTO questionDTO = questionStruct.toQuestionDTO();
+                questionDTOList.add(questionDTO);
+            }catch(Exception e){
+                logger.info("Generating one question struct failed.\n"+e.getMessage());
+                continue;
+            }
         }
+
+        logger.info("success:"+questionDTOList.size());
         return questionDTOList;
     }
 }

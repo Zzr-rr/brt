@@ -56,11 +56,15 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
                 .build();
 
         QuestionStructExtractor questionStructsExtractor = AiServices.create(QuestionStructExtractor.class, qianfanChatModel);
-        QuestionStructList questionStructList = questionStructsExtractor.extractQuestionStructForm(text);
+        try {
+            QuestionStructList questionStructList = questionStructsExtractor.extractQuestionStructForm(text);
 
-        logger.info(questionStructList.toString());
+            return questionStructList.toQuestionDTOList();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
-        return questionStructList.toQuestionDTOList();
+        return null;
     }
 
 }

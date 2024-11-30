@@ -1,14 +1,7 @@
 package com.zhuzirui.brt.model.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -20,16 +13,18 @@ import java.time.LocalDateTime;
  * @since 2024-10-16
  */
 @Data
-public class QuestionBank {
+public class QuestionBankDTO {
     private Integer bankId;
     private Integer userId;
 
     private String title;
     private String description;
-    private Boolean isPublic;
     private String keywords;
+
+    private Boolean isPublic;
+    private Boolean isDeleted;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Boolean isDeleted;
+
 }

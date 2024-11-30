@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-10-16
  */
 public interface QuestionBankService extends IService<QuestionBank> {
-
+    Integer saveQuestionBank(QuestionBank questionBank) throws Exception;
 }
