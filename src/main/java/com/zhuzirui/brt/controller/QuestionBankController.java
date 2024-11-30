@@ -204,9 +204,38 @@ public class QuestionBankController {
         return Result.success(new Pair<QuestionBank,List<Question>>(questionBank,questionSavedList));
     }
 
+    //删除指定id题库及其包含的问题
     @PostMapping("/delete")
-    public Result<Boolean> delete() {
-        return null;
+    public Result<Boolean> delete(@RequestBody QuestionBankDTO questionBankDTO, HttpServletRequest request) {
+        if(questionBankDTO == null || questionBankDTO.getBankId() == null) return Result.error(500, "questionBankId is needed");
+        Integer questionBankId = questionBankDTO.getBankId();
+
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if(user == null) return Result.error(404, "User not found");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+
+        QuestionBank questionBank = questionBankService.getById(questionBankId);
+        if(questionBank == null) return Result.error(404, "QuestionBank not found");
+        if(questionBank.getUserId() != userId) return Result.error(401, "Access denied");
+
+        //先删除对应的问题
+        try {
+            questionService.removeByBankId(questionBankId);
+        }catch (Exception e){
+            return Result.error(500, e.getMessage());
+        }
+        questionBankService.removeById(questionBank);
+        return Result.success(true);
     }
     @PostMapping("/update")
     public Result<Boolean> update() {

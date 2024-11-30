@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface QuestionService extends IService<Question> {
     Integer saveQuestion(Question question) throws Exception;
+    void removeByBankId(Integer bankId) throws Exception;
 }

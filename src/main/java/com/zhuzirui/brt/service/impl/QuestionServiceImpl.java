@@ -1,7 +1,9 @@
 package com.zhuzirui.brt.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhuzirui.brt.model.entity.Question;
 import com.zhuzirui.brt.dao.QuestionMapper;
+import com.zhuzirui.brt.model.entity.User;
 import com.zhuzirui.brt.service.QuestionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +30,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             throw new Exception("saved failed");
         }
         return question.getQuestionId();
+    }
+
+    @Override
+    public void removeByBankId(Integer bankId) throws Exception {
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("bank_id", bankId);
+        questionMapper.delete(queryWrapper);
+
     }
 }
