@@ -35,6 +35,18 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
     @Value("${llm.max-input-length}")
     private int maxInputLength;
 
+    @Value("${llm.openai.base-url}")
+    private String openaiBaseUrl;
+
+    @Value("${llm.openai.secret-key}")
+    private String openaiSecretKey;
+
+    @Value("${llm.openai.model-name}")
+    private String openaiModelName;
+
+    @Value("${llm.choosed-model}")
+    private String choosedModel;
+
     public static List<String> splitTextIntoChunks(String text, int chunkSize) {
         List<String> splitTextList = new ArrayList<>();
         for (int i = 0; i < text.length(); i += chunkSize) {
@@ -48,6 +60,7 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
     private static final Logger logger = Logger.getLogger(QuestionExtractorServiceImpl.class.getName());
 
     private ChatLanguageModel getChatModel(String modelName){
+        logger.info("Trying to get Chat Language Model: " + modelName + " ...");
         switch (modelName){
             case "qianfan":
                 QianfanChatModel qianfanChatModel = QianfanChatModel.builder()
@@ -61,8 +74,9 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
                 return qianfanChatModel;
             case "openai":
                 ChatLanguageModel chatModel = OpenAiChatModel.builder()
-                    .apiKey("sess-XF1TOhOUDkZEsBLg06UsmUdFaT5Lq92wA8bnRPOE")
-                    .modelName("gpt-4o-mini")
+                    .baseUrl(openaiBaseUrl)
+                    .apiKey(openaiSecretKey)
+                    .modelName(openaiModelName)
                     .responseFormat("json_schema")
                     .strictJsonSchema(true)
                     .logRequests(true)
@@ -81,7 +95,7 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
             QuestionStructList extractQuestionStructForm(String text);
         }
 
-        ChatLanguageModel chatModel = getChatModel("qianfan");
+        ChatLanguageModel chatModel = getChatModel(choosedModel);
         if(chatModel == null) throw new Exception("Can't get chat model");
 
         QuestionStructExtractor questionStructsExtractor = AiServices.create(QuestionStructExtractor.class, chatModel);
