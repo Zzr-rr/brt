@@ -22,6 +22,12 @@ mybatis-plus:
       logic-not-delete-value: 0
 
 llm:
+  #单次输入最大字符长度
+  max-input-length: 700
+  #模型列表
+  moonshot-ai:
+    base-url: https://api.moonshot.cn/v1
+    api-key: sk-sHII67jyRRBQOqq3fsxgzMhYgvUHwleZxUJZobuoVjhjC3ih
   qianfan:
     api-key: 8oDtfGdZgs5Tgtu7AkP9n3HI
     api-secret: bdfVt1eXzoC02wyBZFKKlPePiz7CnfeT
@@ -32,7 +38,9 @@ llm:
 
 
 files:
+  max-size: 2097152 # 2MB
+  allowed-extensions: doc,docx,pdf,txt
   upload:
     base-path: D:/xz/WS/temp/upload/
   download:
-    base-url: http://60.204.136.225:6000/brt/file/download/
+    base-url: /brt/file/download/

@@ -1,11 +1,13 @@
 package com.zhuzirui.brt.service.impl;
 
+import ch.qos.logback.core.util.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zhuzirui.brt.model.dto.FileDTO;
 import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.dao.FileMapper;
 import com.zhuzirui.brt.service.FileService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhuzirui.brt.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Autowired
     private FileMapper fileMapper;
+
+    @Autowired
+    private FileUploadService fileUploadService;
 
     //文件baseUrl
     @Value("${files.download.base-url}")
@@ -130,19 +135,19 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     @Override
-    public boolean belongsToUser(Integer fileId, Integer userId) {
-        QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
-        queryWrapper.eq("file_id", fileId);
-        File file = fileMapper.selectOne(queryWrapper);
-        if (file == null) return false;
-        return userId.equals(file.getUserId());
-    }
-
-    @Override
     public File getFileByUrlFileName(String urlFileName) {
         QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
         String fileUrl = downloadBaseUrl + urlFileName;
         queryWrapper.eq("file_url", fileUrl);
         return fileMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public java.io.File getFileContentByFileId(Integer fileId) {
+        QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
+        queryWrapper.eq("file_id", fileId);
+        File file = fileMapper.selectOne(queryWrapper);
+        String fileUrl = file.getFileUrl();
+        return fileUploadService.downloadFile(fileUrl);
     }
 }

@@ -23,5 +23,5 @@ public interface FileService extends IService<File> {
     File getFileByFileId(Integer fileId);
     File getFileByUrlFileName(String urlFileName);
     void updateFile(FileDTO fileDTO);
-    boolean belongsToUser(Integer fileId, Integer userId);
+    java.io.File getFileContentByFileId(Integer fileId);
 }

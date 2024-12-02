@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Service
@@ -25,9 +26,6 @@ public class FileUploadServiceLocalImpl implements FileUploadService {
         //获取文件原始名称
         String originalFilename = file.getOriginalFilename();
         //获取文件的类型
-//        String type = originalFilename.substring(originalFilename.lastIndexOf("."));
-
-//        System.out.println(originalFilename);
 
         //获取文件
         File uploadParentFile = new File(fileUploadPath);
@@ -44,5 +42,12 @@ public class FileUploadServiceLocalImpl implements FileUploadService {
         file.transferTo(uploadFile);
 
         return downloadBaseUrl + uuid + "_" + originalFilename;
+    }
+
+    @Override
+    public File downloadFile(String fileUrl) {
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        String filePath = fileUploadPath + fileName;
+        return new File(filePath);
     }
 }

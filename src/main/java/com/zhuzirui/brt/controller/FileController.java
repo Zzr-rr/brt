@@ -2,19 +2,15 @@ package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
 import com.zhuzirui.brt.dao.DownloadHistoryMapper;
-import com.zhuzirui.brt.dao.FileMapper;
 import com.zhuzirui.brt.mapper.DownloadHistoryStructMapper;
 import com.zhuzirui.brt.mapper.FileStructMapper;
 import com.zhuzirui.brt.model.dto.DownloadHistoryDTO;
 import com.zhuzirui.brt.model.dto.FileDTO;
-import com.zhuzirui.brt.model.dto.QuestionDTO;
 import com.zhuzirui.brt.model.entity.DownloadHistory;
 import com.zhuzirui.brt.model.entity.File;
 import com.zhuzirui.brt.model.entity.User;
 import com.zhuzirui.brt.service.*;
-import com.zhuzirui.brt.service.impl.FileDownloadServiceLocalImpl;
 import com.zhuzirui.brt.utils.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +24,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
@@ -60,8 +53,6 @@ public class FileController {
     @Autowired
     FileUploadService fileUploadService;
 
-    @Autowired
-    FileDownloadServiceLocalImpl fileDownloadService;
 
     @Autowired
     FileDeleteService fileDeleteService;
@@ -84,6 +75,11 @@ public class FileController {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Value("#{'${files.allowed-extensions}'.split(',')}")
+    private List<String> allowedExtension;
+
+    @Value("${files.max-size}")
+    private int maxFileSize;
 
     //上传文件
     @PostMapping("/create")
@@ -104,11 +100,24 @@ public class FileController {
             return Result.error(401, "Invalid JWT token");
         }
 
+        //判断文件是否符合要求
+        //判断文件是否为空
+        if (multipartFile.isEmpty()) {
+                return Result.error(400, "File is empty");
+        }
+        //判断文件大小
+        if (multipartFile.getSize() > maxFileSize) {
+            return Result.error(400, "File size exceeds limit");
+        }
+        //判断文件类型
+        String fileName = multipartFile.getOriginalFilename();
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+        if (!allowedExtension.contains(extension)) {
+            return Result.error(400, "Invalid file type: ."+extension+" not allowed");
+        }
+
         String fileUrl = null;
         // 保存文件到本地存储
-        if (multipartFile.isEmpty()) {
-            return Result.error(400, "File is empty");
-        }
         try {
             //保存并返回url
             fileUrl = fileUploadService.uploadFile(multipartFile);
@@ -142,7 +151,7 @@ public class FileController {
                                              HttpServletRequest request,
                                              HttpServletResponse response)  {
         try{
-            java.io.File file = fileDownloadService.downloadFile(fileName);
+            java.io.File file = fileUploadService.downloadFile(fileName);
             if (file == null || !file.exists()) {
                 return ResponseEntity.notFound().build();
             }
@@ -312,29 +321,6 @@ public class FileController {
         }
 
         return Result.success(fileService.listFiles(fileDTO));
-    }
-
-    //test
-    //测试用，一会删
-    @PostMapping("/test")
-    public Result<List<QuestionDTO>> test() {
-
-        List<QuestionDTO> questionDTOList = null;
-
-        try{
-            questionDTOList =  questionExtractorService.extractQuestions("百度智能云千帆大模型平台不仅提供了包括文心一言在内的多种模型,还提供了各种 AI 开发工具和完整的开发环境,使客户能够轻松使用和开发大模型应用。平台支持的模型主要分为以下几类:\n" +
-                "\n" +
-                "Embedding\n" +
-                "Chat\n" +
-                "Completion\n" +
-                "本文将重点介绍如何使用 Langchain 与千帆平台的 Chat 模型进行交互。\n"
-                );
-        }catch (Exception e){
-            e.printStackTrace();
-            return Result.error(500, e.getMessage());
-        }
-
-        return Result.success(questionDTOList);
     }
 
 }

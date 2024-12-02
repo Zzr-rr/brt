@@ -120,6 +120,10 @@ class QuestionStruct{
 public class QuestionStructList{
     private List<QuestionStruct> questionStructList;
 
+    public QuestionStructList(){
+        questionStructList = new ArrayList<>();
+    }
+
     private static final Logger logger = Logger.getLogger(QuestionStructList.class.getName());
 
     public List<QuestionDTO> toQuestionDTOList(){
@@ -139,5 +143,9 @@ public class QuestionStructList{
 
         logger.info("success:"+questionDTOList.size());
         return questionDTOList;
+    }
+
+    public void addAll(QuestionStructList questionStructList1){
+        this.questionStructList.addAll(questionStructList1.questionStructList);
     }
 }
