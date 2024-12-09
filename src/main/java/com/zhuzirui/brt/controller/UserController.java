@@ -18,18 +18,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @PostMapping("/create")
-    public Result<Boolean> create() {
-        return null;
-    }
+    //弃用，用/auth/register注册
+//    @PostMapping("/create")
+//    public Result<Boolean> create() {
+//        return null;
+//    }
+
+    //需要管理员权限
     @PostMapping("/delete")
     public Result<Boolean> delete() {
         return null;
     }
+
+    //修改用户信息
     @PostMapping("/update")
     public Result<Boolean> update() {
         return null;
     }
+
+    //需要管理员权限，列出符合筛选条件的用户
     @PostMapping("/list")
     public Result<Boolean> list() {
         return null;

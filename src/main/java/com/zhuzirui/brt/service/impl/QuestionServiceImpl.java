@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 题目表，存储题库中的各题目和答案信息 服务实现类
@@ -38,5 +40,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         queryWrapper.eq("bank_id", bankId);
         questionMapper.delete(queryWrapper);
 
+    }
+
+    @Override
+    public List<Question> listByBankId(Integer bankId) throws Exception {
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("bank_id", bankId);
+
+        return questionMapper.selectList(queryWrapper);
     }
 }

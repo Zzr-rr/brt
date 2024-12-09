@@ -30,6 +30,7 @@ llm:
     base-url: https://api.moonshot.cn/v1
     api-key: sk-sHII67jyRRBQOqq3fsxgzMhYgvUHwleZxUJZobuoVjhjC3ih
   qianfan:
+    #现在只有这个能用
     api-key: 8oDtfGdZgs5Tgtu7AkP9n3HI
     api-secret: bdfVt1eXzoC02wyBZFKKlPePiz7CnfeT
     model-name: Yi-34B-Chat
@@ -40,7 +41,7 @@ llm:
 
 
 files:
-  max-size: 2097152 # 2MB
+  max-size: 1048576 # 1MB
   allowed-extensions: doc,docx,pdf,txt
   upload:
     base-path: D:/xz/WS/temp/upload/

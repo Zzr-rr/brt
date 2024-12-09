@@ -50,10 +50,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public void deleteFile(File file) {
-        Integer fileId = file.getFileId();
-        QueryWrapper<File> queryWrapper = new QueryWrapper<File>();
-        queryWrapper.eq("file_id", fileId);
-        fileMapper.delete(queryWrapper);
+        file.setIsDeleted(true);
+        file.setUpdatedAt(LocalDateTime.now());
+        this.getBaseMapper().updateById(file);
     }
 
     @Override
@@ -93,9 +92,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         if (fileDTO.getCreatedAt() != null) {
             queryWrapper.ge("created_at", fileDTO.getCreatedAt());
         }
-        if (fileDTO.getIsDeleted() != null) {
-            queryWrapper.eq("is_deleted", fileDTO.getIsDeleted());
-        }
+        queryWrapper.eq("is_deleted", false);
 
         return fileMapper.selectList(queryWrapper);
     }

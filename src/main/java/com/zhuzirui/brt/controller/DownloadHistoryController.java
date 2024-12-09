@@ -16,18 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/brt/downloadHistory")
 public class DownloadHistoryController {
-    @PostMapping("/create")
-    public Result<Boolean> create() {
-        return null;
-    }
-    @PostMapping("/delete")
-    public Result<Boolean> delete() {
-        return null;
-    }
-    @PostMapping("/update")
-    public Result<Boolean> update() {
-        return null;
-    }
+
+    //弃用,下载文件时会生成记录
+//    @PostMapping("/create")
+//    public Result<Boolean> create() {
+//        return null;
+//    }
+
+    //暂时用不上
+//    @PostMapping("/delete")
+//    public Result<Boolean> delete() {
+//        return null;
+//    }
+
+    //弃用，记录禁止修改
+//    @PostMapping("/update")
+//    public Result<Boolean> update() {
+//        return null;
+//    }
+
+    //返回筛选结果
     @PostMapping("/list")
     public Result<Boolean> list() {
         return null;

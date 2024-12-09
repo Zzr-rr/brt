@@ -7,6 +7,7 @@ import com.zhuzirui.brt.common.Result;
 import com.zhuzirui.brt.dao.QuestionMapper;
 import com.zhuzirui.brt.mapper.QuestionBankStructMapper;
 import com.zhuzirui.brt.mapper.QuestionStructMapper;
+import com.zhuzirui.brt.model.dto.FileDTO;
 import com.zhuzirui.brt.model.dto.QuestionBankDTO;
 import com.zhuzirui.brt.model.dto.QuestionDTO;
 import com.zhuzirui.brt.model.entity.File;
@@ -21,10 +22,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +44,7 @@ import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
 @Data
 @Getter
 @Setter
-class CreateBodyParser{
+class CreateBodyParser {
     List<Integer> fileIdList;
     private String title;
     private String description;
@@ -54,7 +52,7 @@ class CreateBodyParser{
 
     private String text;
 
-    QuestionBankDTO getQuestionBankDTO(){
+    QuestionBankDTO getQuestionBankDTO() {
         QuestionBankDTO questionBankDTO = new QuestionBankDTO();
         questionBankDTO.setTitle(title);
         questionBankDTO.setDescription(description);
@@ -107,8 +105,8 @@ public class QuestionBankController {
 
     //根据指定文件id列表生成题库
     @PostMapping("/create")
-    public Result<Pair<QuestionBank,List<Question>>> create(@RequestBody CreateBodyParser body,
-                                                            HttpServletRequest request) {
+    public Result<Pair<QuestionBank, List<Question>>> create(@RequestBody CreateBodyParser body,
+                                                             HttpServletRequest request) {
         logger.info("Body: " + body.toString());
 
         List<Integer> fileIdList = body.getFileIdList();
@@ -122,27 +120,31 @@ public class QuestionBankController {
             // 使用 JwtUtil 提取用户 ID
             userId = jwtUtil.extractUserId(jwtToken);
             User user = userService.getUserByUserId(userId);
-            if(user == null) return Result.error(404, "User not found");
+            if (user == null) return Result.error(404, "User not found");
         } else {
             // 如果没有 JWT Token，返回错误信息
             return Result.error(401, "Invalid JWT token");
         }
 
         //检查所需信息
-        if(fileIdList == null || fileIdList.isEmpty()) return Result.error(500, "need at least one file");
-        if(questionBankDTO == null) return Result.error(500, "need more information");
-        if(questionBankDTO.getTitle() == null || questionBankDTO.getTitle().isEmpty()) return Result.error(500, "need title");
-        if(questionBankDTO.getDescription() == null || questionBankDTO.getDescription().isEmpty()) return Result.error(500, "need description");
-        if(questionBankDTO.getKeywords() == null || questionBankDTO.getKeywords().equals("[]")) return Result.error(500, "need keywords");
+        if (fileIdList == null || fileIdList.isEmpty()) return Result.error(500, "need at least one file");
+        if (questionBankDTO == null) return Result.error(500, "need more information");
+        if (questionBankDTO.getTitle() == null || questionBankDTO.getTitle().isEmpty())
+            return Result.error(500, "need title");
+        if (questionBankDTO.getDescription() == null || questionBankDTO.getDescription().isEmpty())
+            return Result.error(500, "need description");
+        if (questionBankDTO.getKeywords() == null || questionBankDTO.getKeywords().equals("[]"))
+            return Result.error(500, "need keywords");
 
 
         //从文件中抽取文本
         StringBuilder text = new StringBuilder();
-        for(Integer fileId : fileIdList){
+        for (Integer fileId : fileIdList) {
             File file = fileService.getById(fileId);
-            if(file == null) return Result.error(404, "File not found. fileId: "+fileId);
-            if(file.getIsDeleted()) return Result.error(400, "File is deleted. fileId: "+fileId);
-            if(!file.getIsPublic() && !userId.equals(file.getUserId())) return Result.error(401, "Access denied. fileId: "+fileId);
+            if (file == null) return Result.error(404, "File not found. fileId: " + fileId);
+            if (file.getIsDeleted()) return Result.error(400, "File is deleted. fileId: " + fileId);
+            if (!file.getIsPublic() && !userId.equals(file.getUserId()))
+                return Result.error(401, "Access denied. fileId: " + fileId);
 
             //获取文件内容
             java.io.File fileContent = fileService.getFileContentByFileId(fileId);
@@ -158,22 +160,23 @@ public class QuestionBankController {
         questionBankDTO.setUserId(userId);
         QuestionBank questionBank = questionBankStructMapper.dtoToEntity(questionBankDTO);
         Integer questionBankId;
-        try{
+        try {
             questionBankId = questionBankService.saveQuestionBank(questionBank);
-        }catch (Exception e){
-            logger.warning("Save questionBank failed.\n"+e.getMessage());
+        } catch (Exception e) {
+            logger.warning("Save questionBank failed.\n" + e.getMessage());
             return Result.error(500, e.getMessage());
         }
 
         //从文件中获取题库
-        logger.info("Generating question bank: " + questionBankId+" ...");
+        logger.info("Generating question bank: " + questionBankId + " ...");
         List<QuestionDTO> questionDTOList = null;
-        try{
+        try {
             //利用大模型结构化输出从文本中抽取问题集
-            questionDTOList =  questionExtractorService.extractQuestions(text.toString());
+            questionDTOList = questionExtractorService.extractQuestions(text.toString());
 
-            if(questionDTOList == null || questionDTOList.isEmpty()) return Result.error(500, "Generate questions failed, please try again");
-        }catch (Exception e){
+            if (questionDTOList == null || questionDTOList.isEmpty())
+                return Result.error(500, "Generate questions failed, please try again");
+        } catch (Exception e) {
             logger.warning("Failed to generate question bank: \n" + e.getMessage());
             //回滚
             logger.info("No questions were saved. removing questionBank: " + questionBankId);
@@ -185,22 +188,22 @@ public class QuestionBankController {
         //保存问题
         logger.info("Saving questions...");
         List<Question> questionSavedList = new ArrayList<>();
-        for(QuestionDTO questionDTO : questionDTOList){
+        for (QuestionDTO questionDTO : questionDTOList) {
             questionDTO.setBankId(questionBankId);
             questionBankDTO.setIsPublic(false);
             questionBankDTO.setIsDeleted(false);
 
             Question question = questionStructMapper.dtoToEntity(questionDTO);
-            try{
+            try {
                 questionService.save(question);
                 questionSavedList.add(question);
-            }catch (Exception e){
+            } catch (Exception e) {
                 continue;
             }
         }
         //检查是否生成问题
         logger.info("Saved: " + questionSavedList.size());
-        if(questionSavedList.isEmpty()) {
+        if (questionSavedList.isEmpty()) {
             //回滚
             logger.info("No questions were saved. removing questionBank: " + questionBankId);
             questionBankService.removeById(questionBank);
@@ -208,13 +211,14 @@ public class QuestionBankController {
             return Result.error(500, "No questions saved");
         }
 
-        return Result.success(new Pair<QuestionBank,List<Question>>(questionBank,questionSavedList));
+        return Result.success(new Pair<QuestionBank, List<Question>>(questionBank, questionSavedList));
     }
 
     //删除指定id题库及其包含的问题
     @PostMapping("/delete")
     public Result<Boolean> delete(@RequestBody QuestionBankDTO questionBankDTO, HttpServletRequest request) {
-        if(questionBankDTO == null || questionBankDTO.getBankId() == null) return Result.error(500, "questionBankId is needed");
+        if (questionBankDTO == null || questionBankDTO.getBankId() == null)
+            return Result.error(500, "questionBankId is needed");
         Integer questionBankId = questionBankDTO.getBankId();
 
         //鉴权
@@ -225,31 +229,101 @@ public class QuestionBankController {
             // 使用 JwtUtil 提取用户 ID
             userId = jwtUtil.extractUserId(jwtToken);
             User user = userService.getUserByUserId(userId);
-            if(user == null) return Result.error(404, "User not found");
+            if (user == null) return Result.error(404, "User not found");
         } else {
             // 如果没有 JWT Token，返回错误信息
             return Result.error(401, "Invalid JWT token");
         }
 
         QuestionBank questionBank = questionBankService.getById(questionBankId);
-        if(questionBank == null) return Result.error(404, "QuestionBank not found");
-        if(questionBank.getUserId() != userId) return Result.error(401, "Access denied");
+        if (questionBank == null) return Result.error(404, "QuestionBank not found");
+        if (questionBank.getUserId() != userId) return Result.error(401, "Access denied");
 
         //先删除对应的问题
         try {
             questionService.removeByBankId(questionBankId);
-        }catch (Exception e){
+        } catch (Exception e) {
             return Result.error(500, e.getMessage());
         }
         questionBankService.removeById(questionBank);
         return Result.success(true);
     }
+
+    //修改创建者修改题库描述信息（标题，描述，关键字），不允许修改题目内容
     @PostMapping("/update")
-    public Result<Boolean> update() {
-        return null;
+    public Result<Boolean> update(@RequestBody QuestionBankDTO questionBankDTO, HttpServletRequest request) {
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if (user == null) return Result.error(404, "User not found");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+
+        QuestionBank questionBank = questionBankService.getById(questionBankDTO.getBankId());
+        if (questionBank == null) return Result.error(404, "QuestionBank not found");
+        if (questionBank.getUserId() != userId) return Result.error(401, "Access denied");
+
+        if(questionBankDTO.getTitle() !=  null && !questionBankDTO.getTitle().trim().isEmpty())
+            questionBank.setTitle(questionBankDTO.getTitle().trim());
+        if(questionBankDTO.getDescription() !=  null && !questionBankDTO.getDescription().trim().isEmpty())
+            questionBank.setDescription(questionBankDTO.getDescription().trim());
+        if(questionBankDTO.getKeywords() !=  null && !questionBankDTO.getKeywords().isEmpty())
+            questionBank.setKeywords(questionBankDTO.getKeywords().trim());
+
+        //写入数据库
+        boolean res;
+        try{
+            res = questionBankService.updateById(questionBank);
+        }catch(Exception e){
+            return Result.error(500, e.getMessage());
+        }
+
+        return Result.success(true);
     }
-    @PostMapping("/list")
-    public Result<Boolean> list() {
-        return null;
+
+        //根据指定条件筛选
+    @PostMapping("/list/{flag}")
+    public Result<List<QuestionBank>> list(@RequestBody QuestionBankDTO questionBankDTO, HttpServletRequest request, @PathVariable String flag) {
+        //判断查询类型
+        boolean isPublic;
+        if (flag.equals("public")) isPublic = true;
+        else if (flag.equals("personal")) isPublic = false;
+        else return Result.error(401, "Invalid flag");
+
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if (user == null && !isPublic) return Result.error(404, "User not found");
+
+            //个人查询
+            if (user != null && !isPublic) questionBankDTO.setUserId(userId);
+
+            //公共查询
+            if (isPublic) questionBankDTO.setIsPublic(true);
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+
+        List<QuestionBank> questionBanks;
+        try {
+            questionBanks = questionBankService.listQuestionBanks(questionBankDTO);
+        } catch (Exception e) {
+            return Result.error(500, e.getMessage());
+        }
+        return Result.success(questionBanks);
     }
+
 }

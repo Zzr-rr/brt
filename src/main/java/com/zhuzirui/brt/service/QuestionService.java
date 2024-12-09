@@ -3,6 +3,8 @@ package com.zhuzirui.brt.service;
 import com.zhuzirui.brt.model.entity.Question;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 题目表，存储题库中的各题目和答案信息 服务类
@@ -14,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface QuestionService extends IService<Question> {
     Integer saveQuestion(Question question) throws Exception;
     void removeByBankId(Integer bankId) throws Exception;
+    List<Question> listByBankId(Integer bankId) throws Exception;
 }

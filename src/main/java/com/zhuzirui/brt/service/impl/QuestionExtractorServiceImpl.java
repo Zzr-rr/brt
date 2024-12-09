@@ -97,6 +97,7 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
 
         ChatLanguageModel chatModel = getChatModel(choosedModel);
         if(chatModel == null) throw new Exception("Can't get chat model");
+        logger.info("Get " + choosedModel + " successfully.");
 
         QuestionStructExtractor questionStructsExtractor = AiServices.create(QuestionStructExtractor.class, chatModel);
 
@@ -117,6 +118,8 @@ public class QuestionExtractorServiceImpl implements QuestionExtractorService {
 
         return questionStructList.toQuestionDTOList();
 
+
+        //多线程大模型api受不了-^-
 //        // 创建一个线程安全的QuestionStructList
 //        QuestionStructList questionStructList = new QuestionStructList();
 //
