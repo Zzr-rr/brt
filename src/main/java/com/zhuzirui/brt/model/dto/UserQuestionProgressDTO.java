@@ -22,11 +22,14 @@ import java.time.LocalDateTime;
 @Data
 public class UserQuestionProgressDTO{
     private Integer progressId;
+
     private Integer userId;
-    private Integer questionId;
     private Integer attemptNumber;
+
     private Boolean isCorrect;
-    private LocalDateTime attemptTime;
+    private Integer questionId;
     private String userAnswer;
+
+    private LocalDateTime attemptTime;
     private Boolean isDeleted;
 }

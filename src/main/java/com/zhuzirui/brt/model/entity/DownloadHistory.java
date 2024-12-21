@@ -37,10 +37,10 @@ public class DownloadHistory implements Serializable {
     private Integer userId;
 
     /**
-     * 下载文件ID，关联file表
+     * 下载文件URL
      */
-    @TableField("file_id")
-    private Integer fileId;
+    @TableField("source_url")
+    private String sourceUrl;
 
     /**
      * 下载时间

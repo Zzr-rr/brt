@@ -24,7 +24,7 @@ public class DownloadHistoryDTO {
     private Integer downloadId;
 
     private Integer userId;
-    private Integer fileId;
+    private String sourceUrl;
     private LocalDateTime downloadTime;
     private Boolean isDeleted;
 }

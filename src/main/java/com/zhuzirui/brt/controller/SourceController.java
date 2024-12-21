@@ -129,14 +129,9 @@ public class SourceController {
                 return ResponseEntity.notFound().build();
             }
 
-//            //添加下载记录
-//            DownloadHistoryDTO downloadHistoryDTO = new DownloadHistoryDTO();
-//
-//            //查找文件表
-//            File fileFoundByUrl = fileService.getFileByUrlFileName(fileName);
-//            if(fileFoundByUrl == null || fileFoundByUrl.getIsDeleted()) return ResponseEntity.notFound().build();
-//            downloadHistoryDTO.setFileId(fileFoundByUrl.getFileId());
-
+            //添加下载记录
+            DownloadHistoryDTO downloadHistoryDTO = new DownloadHistoryDTO();
+            downloadHistoryDTO.setSourceUrl("/brt/source/download/"+type+"/"+fileName);
             // 调用方法从 Cookie 中获取 JWT Token
             String jwtToken = getJwtTokenFromCookie(request);
             // 检查 JWT Token 是否存在
@@ -147,8 +142,8 @@ public class SourceController {
 
                 if(user == null) return ResponseEntity.badRequest().build();
 
-//                // 将用户 ID 设置到 downloadHistoryDTO 中
-//                downloadHistoryDTO.setUserId(userId);
+                // 将用户 ID 设置到 downloadHistoryDTO 中
+                downloadHistoryDTO.setUserId(userId);
             } else {
                 // 如果没有 JWT Token，返回错误信息
                 return ResponseEntity.badRequest().build();
@@ -156,15 +151,15 @@ public class SourceController {
 
 //            downloadHistoryDTO.setIsDeleted(false);
 //            downloadHistoryDTO.setDownloadTime(LocalDateTime.now());
-//            DownloadHistory downloadHistory = downloadHistoryStructMapper.dtoToEntity(downloadHistoryDTO);
+            DownloadHistory downloadHistory = downloadHistoryStructMapper.dtoToEntity(downloadHistoryDTO);
 
-//            try {
-//                downloadHistoryService.saveDownloadHistory(downloadHistory);
-//            }catch (Exception e) {
-//                e.printStackTrace();
-//                return ResponseEntity.badRequest().build();
-//            }
-//
+            try {
+                downloadHistoryService.saveDownloadHistory(downloadHistory);
+            }catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.badRequest().build();
+            }
+
             // 设置Content-Type，这里可以根据文件类型来设置
             String contentType = Files.probeContentType(file.toPath());
             if (contentType == null) {

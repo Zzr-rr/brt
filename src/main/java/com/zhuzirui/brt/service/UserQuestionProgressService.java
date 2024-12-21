@@ -1,7 +1,10 @@
 package com.zhuzirui.brt.service;
 
+import com.zhuzirui.brt.model.dto.UserQuestionProgressDTO;
 import com.zhuzirui.brt.model.entity.UserQuestionProgress;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-10-16
  */
 public interface UserQuestionProgressService extends IService<UserQuestionProgress> {
-
+    boolean addUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) throws Exception;
+    List<UserQuestionProgress> listUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) ;
 }

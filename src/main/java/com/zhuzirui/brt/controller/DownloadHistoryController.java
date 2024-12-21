@@ -1,9 +1,14 @@
 package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
+import com.zhuzirui.brt.model.entity.DownloadHistory;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -36,8 +41,8 @@ public class DownloadHistoryController {
 //    }
 
     //返回筛选结果
-    @PostMapping("/list")
-    public Result<Boolean> list() {
+    @PostMapping("/list/{type}")
+    public Result<List<DownloadHistory>> list(@PathVariable String type, HttpServletRequest request) {
         return null;
     }
 }
