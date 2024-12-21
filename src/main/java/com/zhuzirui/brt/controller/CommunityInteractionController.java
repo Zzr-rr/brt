@@ -11,10 +11,9 @@ import com.zhuzirui.brt.service.UserService;
 import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
 
@@ -134,4 +133,33 @@ public class CommunityInteractionController {
         communityInteractionService.save(communityInteraction);
         return Result.success(true);
     }
+
+    @GetMapping("/list/post")
+    public Result<List<CommunityInteraction>> listPost() {
+        //返回所有帖子
+        return Result.success(communityInteractionService.listPosts());
+    }
+
+    @GetMapping("/list/like")
+    public Result<List<Integer>> listLike(@RequestParam Integer targetId) {
+        //返回所有点赞这篇帖子的用户ID
+        if(targetId == null)
+            return Result.error(401, "TargetId is empty");
+        CommunityInteraction targetCommunityInteraction = communityInteractionService.getById(targetId);
+        if(targetCommunityInteraction == null)
+            return Result.error(404, "Target CommunityInteraction not found");
+        return Result.success(communityInteractionService.listLikedUsers(targetId));
+    }
+
+    @GetMapping("/list/comment")
+    public Result<List<CommunityInteraction>> listComment(@RequestParam Integer targetId) {
+        //返回这篇帖子的所有评论
+        if(targetId == null)
+            return Result.error(401, "TargetId is empty");
+        CommunityInteraction targetCommunityInteraction = communityInteractionService.getById(targetId);
+        if(targetCommunityInteraction == null)
+            return Result.error(404, "Target CommunityInteraction not found");
+        return Result.success(communityInteractionService.listComments(targetId));
+    }
+
 }
