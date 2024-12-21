@@ -28,11 +28,11 @@ public class FileDTO {
     private String fileName;
     private Boolean isPublic;
     private String keywords;
-    private LocalDateTime updatedAt;
 
     private String fileType;
     private String fileUrl;
 
+    private LocalDateTime updatedAt;
     private LocalDateTime uploadTime;
     private LocalDateTime createdAt;
 

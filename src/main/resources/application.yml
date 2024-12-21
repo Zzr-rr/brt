@@ -44,6 +44,14 @@ files:
   max-size: 1048576 # 1MB
   allowed-extensions: doc,docx,pdf,txt
   upload:
-    base-path: D:/xz/WS/temp/upload/
+    base-path: D:/xz/WS/temp/upload/files/
   download:
-    base-url: /brt/file/download/
+    base-url: /brt/source/download/content/
+
+images:
+  upload:
+    base-path: D:/xz/WS/temp/upload/images/
+  download:
+    base-url: /brt/source/download/image/
+  max-size: 2097152 # 2MB
+  allowed-extensions: jpg,jpeg,png

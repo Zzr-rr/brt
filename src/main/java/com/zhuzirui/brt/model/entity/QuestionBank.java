@@ -47,6 +47,13 @@ public class QuestionBank implements Serializable {
     private String description;
 
     /**
+     * 题库封面图url
+     */
+    @TableField("cover_url")
+    private String coverUrl;
+
+
+    /**
      * 题库是否公开
      */
     @TableField("is_public")

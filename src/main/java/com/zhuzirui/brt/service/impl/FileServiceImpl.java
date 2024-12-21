@@ -145,6 +145,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         queryWrapper.eq("file_id", fileId);
         File file = fileMapper.selectOne(queryWrapper);
         String fileUrl = file.getFileUrl();
-        return fileUploadService.downloadFile(fileUrl);
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        try {
+            return fileUploadService.downloadFile(fileName, "content");
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }

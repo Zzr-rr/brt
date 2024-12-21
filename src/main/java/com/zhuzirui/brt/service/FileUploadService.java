@@ -17,6 +17,7 @@ import java.io.Serializable;
  */
 @Service
 public interface FileUploadService {
-    public String uploadFile(MultipartFile file) throws IOException;
-    java.io.File downloadFile(String fileUrl);
+    public String uploadFile(MultipartFile file,String type) throws IOException;
+    java.io.File downloadFile(String fileName, String type) throws IOException;
+    boolean deleteFile(String fileUrl) throws IOException;
 }

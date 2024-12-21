@@ -13,6 +13,7 @@ import com.zhuzirui.brt.service.*;
 import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -55,9 +56,6 @@ public class FileController {
 
 
     @Autowired
-    FileDeleteService fileDeleteService;
-
-    @Autowired
     FileStructMapper fileStructMapper;
 
     @Autowired
@@ -76,14 +74,16 @@ public class FileController {
     JwtUtil jwtUtil;
 
     @Value("#{'${files.allowed-extensions}'.split(',')}")
-    private List<String> allowedExtension;
+    private List<String> allowedExtensions;
 
     @Value("${files.max-size}")
     private int maxFileSize;
 
     //上传文件
     @PostMapping("/create")
-    public Result<FileDTO> create(@Validated FileDTO fileDTO, @RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
+    public Result<FileDTO> create(@RequestBody FileDTO fileDTO,HttpServletRequest request) {
+        System.out.println(fileDTO);
+
         // 调用方法从 Cookie 中获取 JWT Token
         String jwtToken = getJwtTokenFromCookie(request);
         // 检查 JWT Token 是否存在
@@ -100,41 +100,16 @@ public class FileController {
             return Result.error(401, "Invalid JWT token");
         }
 
-        //判断文件是否符合要求
-        //判断文件是否为空
-        if (multipartFile.isEmpty()) {
-                return Result.error(400, "File is empty");
-        }
-        //判断文件大小
-        if (multipartFile.getSize() > maxFileSize) {
-            return Result.error(400, "File size exceeds limit");
-        }
-        //判断文件类型
-        String fileName = multipartFile.getOriginalFilename();
-        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        if (!allowedExtension.contains(extension)) {
-            return Result.error(400, "Invalid file type: ."+extension+" not allowed");
-        }
-
-        String fileUrl = null;
-        // 保存文件到本地存储
-        try {
-            //保存并返回url
-            fileUrl = fileUploadService.uploadFile(multipartFile);
-            fileDTO.setFileUrl(fileUrl); // 设置文件URL
-
-            //设置时间
-            fileDTO.setCreatedAt(LocalDateTime.now());
-            fileDTO.setUpdatedAt(LocalDateTime.now());
-            fileDTO.setUploadTime(LocalDateTime.now());
-
-            //设置属性
-            fileDTO.setIsPublic(false);
-            fileDTO.setIsDeleted(false);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Result.error(500, "Failed to save file.");
-        }
+        if(fileDTO.getFileName() == null || fileDTO.getFileName().isEmpty())
+            return Result.error(401, "Invalid file name");
+        if(fileDTO.getFileType() == null || fileDTO.getFileType().isEmpty())
+            return Result.error(401, "Invalid file type");
+        if(fileDTO.getKeywords() == null || fileDTO.getKeywords().isEmpty())
+            return Result.error(401, "Invalid keywords");
+        if(fileDTO.getFileUrl() == null || fileDTO.getFileUrl().isEmpty())
+            return Result.error(401, "Invalid file url");
+        fileDTO.setIsDeleted(false);
+        fileDTO.setIsDeleted(false);
 
         File file = fileStructMapper.dtoToEntity(fileDTO);
 
@@ -143,81 +118,6 @@ public class FileController {
         fileDTO = fileStructMapper.entityToDto(file);
         if(result) return Result.success(fileDTO);
         else return Result.error(500, "Failed to save file");
-    }
-
-    //文件下载本地接口
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<Resource> download(@PathVariable String fileName,
-                                             HttpServletRequest request,
-                                             HttpServletResponse response)  {
-        try{
-            java.io.File file = fileUploadService.downloadFile(fileName);
-            if (file == null || !file.exists()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            Resource resource = new UrlResource(file.toURI());
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            //添加下载记录
-            DownloadHistoryDTO downloadHistoryDTO = new DownloadHistoryDTO();
-
-            //查找文件表
-            File fileFoundByUrl = fileService.getFileByUrlFileName(fileName);
-            if(fileFoundByUrl == null || fileFoundByUrl.getIsDeleted()) return ResponseEntity.notFound().build();
-            downloadHistoryDTO.setFileId(fileFoundByUrl.getFileId());
-
-            // 调用方法从 Cookie 中获取 JWT Token
-            String jwtToken = getJwtTokenFromCookie(request);
-            // 检查 JWT Token 是否存在
-            if (jwtToken != null && !jwtToken.isEmpty()) {
-                // 使用 JwtUtil 提取用户 ID
-                Integer userId = jwtUtil.extractUserId(jwtToken);
-                User user = userService.getById(userId);
-
-                if(user == null) return ResponseEntity.badRequest().build();
-
-                // 将用户 ID 设置到 downloadHistoryDTO 中
-                downloadHistoryDTO.setUserId(userId);
-            } else {
-                // 如果没有 JWT Token，返回错误信息
-                return ResponseEntity.badRequest().build();
-            }
-
-            downloadHistoryDTO.setIsDeleted(false);
-            downloadHistoryDTO.setDownloadTime(LocalDateTime.now());
-            DownloadHistory downloadHistory = downloadHistoryStructMapper.dtoToEntity(downloadHistoryDTO);
-
-            try {
-                downloadHistoryService.saveDownloadHistory(downloadHistory);
-            }catch (Exception e) {
-                e.printStackTrace();
-                return ResponseEntity.badRequest().build();
-            }
-
-            // 设置Content-Type，这里可以根据文件类型来设置
-            String contentType = Files.probeContentType(file.toPath());
-            if (contentType == null) {
-                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-            }
-
-            // 设置Content-Disposition，这将告诉浏览器这是一个文件下载响应
-            HttpHeaders headers = new HttpHeaders();
-            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFileName);
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .body(resource);
-
-        } catch (IOException e){
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-
     }
 
     //根据fileId删除文件
@@ -248,7 +148,7 @@ public class FileController {
         String fileUrl = file.getFileUrl();
         boolean result = false;
         try{
-            result = fileDeleteService.deleteFile(fileUrl);
+            result = fileUploadService.deleteFile(fileUrl);
         }catch (IOException e){
             e.printStackTrace();
             return Result.error(500, "Failed to delete file");
@@ -289,7 +189,6 @@ public class FileController {
         fileService.updateFile(fileDTO);
         return Result.success(true);
     }
-
 
     //根据指定条件筛选
     @PostMapping("/list/{flag}")

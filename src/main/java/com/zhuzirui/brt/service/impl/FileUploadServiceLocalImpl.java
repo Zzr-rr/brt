@@ -19,10 +19,18 @@ public class FileUploadServiceLocalImpl implements FileUploadService {
 
     //文件baseUrl
     @Value("${files.download.base-url}")
-    private String downloadBaseUrl;
+    private String fileDownloadBaseUrl;
+
+    //图片磁盘路径
+    @Value("${images.upload.base-path}")
+    private String imageUploadPath;
+
+    //图片baseUrl
+    @Value("${images.download.base-url}")
+    private String imageDownloadBaseUrl;
 
     @Override
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file,String type) throws IOException {
         //获取文件原始名称
         String originalFilename = file.getOriginalFilename();
         //获取文件的类型
@@ -36,18 +44,31 @@ public class FileUploadServiceLocalImpl implements FileUploadService {
         }
         //定义一个文件唯一标识码（UUID）
         String uuid = UUID.randomUUID().toString();
-
-        File uploadFile = new File(fileUploadPath + uuid + "_" + originalFilename);
+        String basePath = (type.equals("image")? imageUploadPath : fileUploadPath);
+        String baseUrl = (type.equals("image")? imageDownloadBaseUrl : fileDownloadBaseUrl);
+        File uploadFile = new File(basePath + uuid + "_" + originalFilename);
         //将临时文件转存到指定磁盘位置
         file.transferTo(uploadFile);
 
-        return downloadBaseUrl + uuid + "_" + originalFilename;
+        return baseUrl + uuid + "_" + originalFilename;
     }
 
     @Override
-    public File downloadFile(String fileUrl) {
+    public File downloadFile(String fileName, String type) {
+        String basePath = (type.equals("image")? imageUploadPath : fileUploadPath);
+        String filePath = basePath + fileName;
+        return new File(filePath);
+    }
+
+
+    @Override
+    public boolean deleteFile(String fileUrl) throws IOException {
+
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         String filePath = fileUploadPath + fileName;
-        return new File(filePath);
+
+        File file = new File(filePath);
+        if(!file.exists()) return true;
+        return file.delete();
     }
 }

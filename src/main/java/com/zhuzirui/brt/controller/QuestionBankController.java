@@ -41,26 +41,7 @@ import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
  * @since 2024-10-16
  */
 
-@Data
-@Getter
-@Setter
-class CreateBodyParser {
-    List<Integer> fileIdList;
-    private String title;
-    private String description;
-    private String keywords;
 
-    private String text;
-
-    QuestionBankDTO getQuestionBankDTO() {
-        QuestionBankDTO questionBankDTO = new QuestionBankDTO();
-        questionBankDTO.setTitle(title);
-        questionBankDTO.setDescription(description);
-        questionBankDTO.setKeywords(keywords);
-
-        return questionBankDTO;
-    }
-}
 
 
 @RestController
@@ -102,15 +83,37 @@ public class QuestionBankController {
 
     private static final Gson gson = new Gson();
 
+    @Data
+    @Getter
+    @Setter
+    public static class CreateBodyParser {
+        List<Integer> fileIdList;
+        private String title;
+        private String description;
+        private String keywords;
+        private String coverUrl;
+
+        private String text;
+
+        QuestionBankDTO getQuestionBankDTO() {
+            QuestionBankDTO questionBankDTO = new QuestionBankDTO();
+            questionBankDTO.setTitle(title);
+            questionBankDTO.setDescription(description);
+            questionBankDTO.setKeywords(keywords);
+            questionBankDTO.setCoverUrl(coverUrl);
+            return questionBankDTO;
+        }
+    }
+
 
     //根据指定文件id列表生成题库
     @PostMapping("/create")
     public Result<Pair<QuestionBank, List<Question>>> create(@RequestBody CreateBodyParser body,
                                                              HttpServletRequest request) {
-        logger.info("Body: " + body.toString());
 
         List<Integer> fileIdList = body.getFileIdList();
         QuestionBankDTO questionBankDTO = body.getQuestionBankDTO();
+        logger.info(questionBankDTO.getCoverUrl());
 
         //鉴权
         String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
@@ -133,6 +136,8 @@ public class QuestionBankController {
             return Result.error(500, "need title");
         if (questionBankDTO.getDescription() == null || questionBankDTO.getDescription().isEmpty())
             return Result.error(500, "need description");
+        if (questionBankDTO.getCoverUrl() == null || questionBankDTO.getCoverUrl().isEmpty())
+            return Result.error(500, "need cover url");
         if (questionBankDTO.getKeywords() == null || questionBankDTO.getKeywords().equals("[]"))
             return Result.error(500, "need keywords");
 
@@ -274,6 +279,8 @@ public class QuestionBankController {
             questionBank.setTitle(questionBankDTO.getTitle().trim());
         if(questionBankDTO.getDescription() !=  null && !questionBankDTO.getDescription().trim().isEmpty())
             questionBank.setDescription(questionBankDTO.getDescription().trim());
+        if(questionBankDTO.getCoverUrl() !=  null && !questionBankDTO.getCoverUrl().trim().isEmpty())
+            questionBank.setCoverUrl(questionBankDTO.getCoverUrl().trim());
         if(questionBankDTO.getKeywords() !=  null && !questionBankDTO.getKeywords().isEmpty())
             questionBank.setKeywords(questionBankDTO.getKeywords().trim());
 
