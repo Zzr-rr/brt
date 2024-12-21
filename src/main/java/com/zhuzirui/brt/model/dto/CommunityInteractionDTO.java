@@ -21,11 +21,18 @@ import java.time.LocalDateTime;
  */
 @Data
 public class CommunityInteractionDTO implements Serializable {
+
+
     private Integer interactionId;
+
     private Integer userId;
+
     private String content;
     private String type;
     private Integer targetId;
+
+
+    private Integer likesCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;

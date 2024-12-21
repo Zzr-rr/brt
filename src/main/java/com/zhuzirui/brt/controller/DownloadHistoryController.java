@@ -40,7 +40,7 @@ public class DownloadHistoryController {
 //        return null;
 //    }
 
-    //返回筛选结果
+    //返回筛选结果  管理员能看到下载记录
     @PostMapping("/list/{type}")
     public Result<List<DownloadHistory>> list(@PathVariable String type, HttpServletRequest request) {
         return null;

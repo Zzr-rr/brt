@@ -59,6 +59,12 @@ public class CommunityInteraction implements Serializable {
     private LocalDateTime createdAt;
 
     /**
+     * 点赞数
+     */
+    @TableField("likes_count")
+    private Integer likesCount;
+
+    /**
      * 互动最近一次更新时间
      */
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)

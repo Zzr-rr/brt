@@ -36,7 +36,7 @@ public class UserController {
         return null;
     }
 
-    //需要管理员权限，列出符合筛选条件的用户
+    //管理员权限，列出符合筛选条件的用户
     @PostMapping("/list")
     public Result<Boolean> list() {
         return null;
