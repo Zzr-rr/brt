@@ -1,0 +1,57 @@
+spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://123.56.138.30:3306/brt
+#    type: com.mysql.cj.jdbc.MysqlDataSource
+#    username: root
+#    password: root123
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://60.204.136.225:3306/brt
+    type: com.mysql.cj.jdbc.MysqlDataSource
+    username: brt
+    password: 123456@brt.
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: 1
+      logic-not-delete-value: 0
+
+llm:
+  #单次输入最大字符长度
+  max-input-length: 700
+  choosed-model: qianfan
+  #模型列表
+  moonshot-ai:
+    base-url: https://api.moonshot.cn/v1
+    api-key: sk-sHII67jyRRBQOqq3fsxgzMhYgvUHwleZxUJZobuoVjhjC3ih
+  qianfan:
+    #现在只有这个能用
+    api-key: 8oDtfGdZgs5Tgtu7AkP9n3HI
+    api-secret: bdfVt1eXzoC02wyBZFKKlPePiz7CnfeT
+    model-name: Yi-34B-Chat
+  openai:
+    base-url: https://api.chatanywhere.tech/v1
+    secret-key: sk-45aHXQhjXoZJzXCZyuY2OjmAIhDHN9BnoN26nFTFdFgl7y1R
+    model-name: gpt-3.5-turbo
+
+
+files:
+  max-size: 1048576 # 1MB
+  allowed-extensions: doc,docx,pdf,txt
+  upload:
+    base-path: D:/xz/WS/temp/upload/files/
+  download:
+    base-url: /brt/source/download/content/
+
+images:
+  upload:
+    base-path: D:/xz/WS/temp/upload/images/
+  download:
+    base-url: /brt/source/download/image/
+  max-size: 2097152 # 2MB
+  allowed-extensions: jpg,jpeg,png

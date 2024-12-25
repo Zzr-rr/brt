@@ -1,11 +1,17 @@
 package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
+import com.zhuzirui.brt.mapper.UserStructMapper;
 import com.zhuzirui.brt.model.dto.UserDTO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.zhuzirui.brt.model.entity.User;
+import com.zhuzirui.brt.service.UserService;
+import com.zhuzirui.brt.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
 
 /**
  * <p>
@@ -16,13 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-10-16
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/brt/user")
 public class UserController {
-    //弃用，用/auth/register注册
-//    @PostMapping("/create")
-//    public Result<Boolean> create() {
-//        return null;
-//    }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserStructMapper userStructMapper;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     //需要管理员权限
     @PostMapping("/delete")
@@ -40,5 +50,27 @@ public class UserController {
     @PostMapping("/list")
     public Result<Boolean> list() {
         return null;
+    }
+
+    //返回用户信息
+    @GetMapping("/info")
+    public Result<User> info(HttpServletRequest request) {
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        User user = null;
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            user = userService.getUserByUserId(userId);
+            if (user == null) return Result.error(404, "User not found");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+
+        user.setPasswordHash("Not shown");
+        return Result.success(user);
     }
 }

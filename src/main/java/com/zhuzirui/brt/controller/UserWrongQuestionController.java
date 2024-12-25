@@ -29,6 +29,10 @@ import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
 @RestController
 @RequestMapping("/brt/userWrongQuestion")
 public class UserWrongQuestionController {
+    static enum ReviewStatus {
+        NOT_REVIEWED, REVIEWED, MASTERED
+    }
+
     @Autowired
     private UserService userService;
 
@@ -47,9 +51,39 @@ public class UserWrongQuestionController {
         return null;
     }
     @PostMapping("/update")
-    public Result<Boolean> update() {
-        return null;
+    public Result<Boolean> update(@RequestBody UserWrongQuestionDTO userWrongQuestionDTO, HttpServletRequest request) {
+        Integer wrongId = userWrongQuestionDTO.getWrongId();
+        String reviewStatus = userWrongQuestionDTO.getReviewStatus();
+
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if (user == null) return Result.error(404, "User not found");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+
+        UserWrongQuestion userWrongQuestion = userWrongQuestionService.getById(wrongId);
+        if(userWrongQuestion == null) return Result.error(404, "User wrong question not found");
+        if(userWrongQuestion.getUserId() != userId) return Result.error(403, "Forbidden");
+
+        try {
+             ReviewStatus reviewStatusTrans = ReviewStatus.valueOf(reviewStatus);
+        } catch (IllegalArgumentException e) {
+             return Result.error(401, "Invalid review status");
+        }
+
+        userWrongQuestion.setReviewStatus(reviewStatus);
+        userWrongQuestionService.updateById(userWrongQuestion);
+        return Result.success(true);
     }
+
     @PostMapping("/list")
     public Result<List<UserWrongQuestion>> list(@RequestBody UserWrongQuestionDTO userWrongQuestionDTO, HttpServletRequest request) {
         //鉴权
@@ -70,4 +104,6 @@ public class UserWrongQuestionController {
         List<UserWrongQuestion> userWrongQuestions = userWrongQuestionService.listUserWrongQuestions(userWrongQuestionDTO);
         return Result.success(userWrongQuestions);
     }
+
+
 }
