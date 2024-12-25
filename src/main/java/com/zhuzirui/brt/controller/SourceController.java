@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
 
@@ -72,15 +73,14 @@ public class SourceController {
 
     //上传文件内容/图片
     @PostMapping("/upload/{type}")
-    public Result<String> uploadContent(@RequestParam MultipartFile file, @PathVariable String type, HttpServletRequest request) {
+    public Result<String> upload(@RequestBody MultipartFile file, @PathVariable String type, HttpServletRequest request) {
         if (file.isEmpty()) {
             return Result.error(400, "File is empty");
         }
 
-        String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+        String fileExtension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         int fileSize = (int) file.getSize();
         if(type.equals("image")) {
-            //下载图片判断
             if(!allowedImageExtensions.contains(fileExtension)) {
                 return Result.error(400, "Image extension not supported");
             }
@@ -89,7 +89,6 @@ public class SourceController {
             }
         }
         else if(type.equals("content")){
-            //下载文件判断
             if(!allowedExtensions.contains(fileExtension)) {
                 return Result.error(400, "Content extension not supported");
             }
