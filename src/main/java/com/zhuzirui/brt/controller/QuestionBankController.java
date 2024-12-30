@@ -249,7 +249,8 @@ public class QuestionBankController {
         } catch (Exception e) {
             return Result.error(500, e.getMessage());
         }
-        questionBankService.removeById(questionBank);
+        questionBank.setIsDeleted(true);
+        questionBankService.updateById(questionBank);
         return Result.success(true);
     }
 

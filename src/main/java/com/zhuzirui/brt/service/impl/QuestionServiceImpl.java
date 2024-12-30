@@ -26,26 +26,19 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     private QuestionMapper questionMapper;
 
     @Override
-    public Integer saveQuestion (Question question) throws Exception {
-        int insert = questionMapper.insert(question);
-        if (insert < 1) {
-            throw new Exception("saved failed");
-        }
-        return question.getQuestionId();
-    }
-
-    @Override
     public void removeByBankId(Integer bankId) throws Exception {
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("bank_id", bankId);
-        questionMapper.delete(queryWrapper);
-
+        Question question = new Question();
+        question.setIsDeleted(true);
+        questionMapper.update(question, queryWrapper);
     }
 
     @Override
     public List<Question> listByBankId(Integer bankId) throws Exception {
         QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("bank_id", bankId);
+        queryWrapper.eq("is_deleted", false);
 
         return questionMapper.selectList(queryWrapper);
     }

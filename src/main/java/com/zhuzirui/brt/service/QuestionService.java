@@ -14,7 +14,6 @@ import java.util.List;
  * @since 2024-10-16
  */
 public interface QuestionService extends IService<Question> {
-    Integer saveQuestion(Question question) throws Exception;
     void removeByBankId(Integer bankId) throws Exception;
     List<Question> listByBankId(Integer bankId) throws Exception;
 }
