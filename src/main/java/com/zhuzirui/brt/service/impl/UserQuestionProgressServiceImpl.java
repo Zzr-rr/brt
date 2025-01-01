@@ -51,7 +51,8 @@ public class UserQuestionProgressServiceImpl extends ServiceImpl<UserQuestionPro
         if (question == null) {
             throw new Exception("Question not found");
         }
-        userQuestionProgressDTO.setIsCorrect(question.getCorrectAnswer().equals(userAnswer));
+        boolean isCorrect = questionService.isCorrect(question, userAnswer);
+        userQuestionProgressDTO.setIsCorrect(isCorrect);
         UserQuestionProgress userQuestionProgress = userQuestionProgressStructMapper.dtoToEntity(userQuestionProgressDTO);
 
         QueryWrapper<UserQuestionProgress> wrapper = new QueryWrapper<>();

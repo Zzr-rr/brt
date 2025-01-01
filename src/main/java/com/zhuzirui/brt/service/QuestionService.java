@@ -16,4 +16,5 @@ import java.util.List;
 public interface QuestionService extends IService<Question> {
     void removeByBankId(Integer bankId) throws Exception;
     List<Question> listByBankId(Integer bankId) throws Exception;
+    boolean isCorrect(Question question, String answer);
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-enum Difficulty{
+ enum Difficulty{
         EASY,
         MEDIUM,
         HARD
