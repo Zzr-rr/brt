@@ -1,10 +1,13 @@
 package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
+import com.zhuzirui.brt.model.dto.QuestionBankDTO;
 import com.zhuzirui.brt.model.dto.UserQuestionProgressDTO;
 import com.zhuzirui.brt.model.entity.Question;
+import com.zhuzirui.brt.model.entity.QuestionBank;
 import com.zhuzirui.brt.model.entity.User;
 import com.zhuzirui.brt.model.entity.UserQuestionProgress;
+import com.zhuzirui.brt.service.QuestionBankService;
 import com.zhuzirui.brt.service.QuestionService;
 import com.zhuzirui.brt.service.UserQuestionProgressService;
 import com.zhuzirui.brt.service.UserService;
@@ -40,6 +43,9 @@ public class UserQuestionProgressController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private QuestionBankService questionBankService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -102,6 +108,41 @@ public class UserQuestionProgressController {
         }
         userQuestionProgressDTO.setUserId(userId);
         List<UserQuestionProgress> userQuestionProgressList = userQuestionProgressService.listUserQuestionProgress(userQuestionProgressDTO);
+
+        return Result.success(userQuestionProgressList);
+    }
+    @PostMapping("/bank/list")
+    public Result<List<UserQuestionProgress>> listByBank(@RequestBody QuestionBankDTO questionBankDTO, HttpServletRequest request) {
+
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if (user == null) return Result.error(404, "User not found");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+        if(questionBankDTO.getBankId() == null)
+            return Result.error(404,"not found");
+        QuestionBank questionBank = new QuestionBank();
+        questionBank.setBankId(questionBankDTO.getBankId());
+        questionBank = questionBankService.getById(questionBank);
+        if(questionBank == null)
+            return Result.error(404,"not found");
+        if(questionBank.getUserId() != userId )
+            return Result.error(401,"Access denied");
+        List<UserQuestionProgress> userQuestionProgressList = null;
+        try {
+            userQuestionProgressList =
+                    userQuestionProgressService.listByBankId(questionBank.getBankId());
+        }catch (Exception e){
+            return Result.error(404,"not found");
+        }
 
         return Result.success(userQuestionProgressList);
     }

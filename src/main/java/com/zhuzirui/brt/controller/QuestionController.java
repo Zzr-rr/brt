@@ -13,10 +13,7 @@ import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -98,5 +95,12 @@ public class QuestionController {
         }
 
         return Result.success(questionList);
+    }
+
+    @GetMapping("/get")
+    public Result<Question> get(@RequestParam Integer questionId, HttpServletRequest request) {
+        Question question = questionService.getById(questionId);
+        if(question == null) return Result.error(404, "Question not found");
+        return Result.success(question);
     }
 }

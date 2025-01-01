@@ -17,4 +17,5 @@ import java.util.List;
 public interface UserQuestionProgressService extends IService<UserQuestionProgress> {
     boolean addUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) throws Exception;
     List<UserQuestionProgress> listUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) ;
+    List<UserQuestionProgress> listByBankId(Integer bankId);
 }
