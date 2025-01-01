@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 enum QuestionType{
     SINGLE_CHOICE,
     MULTIPLE_CHOICE,
-    FILL_IN_THE_BLANK,
+//    FILL_IN_THE_BLANK,
     SHORT_ANSWER
 }
 
@@ -89,16 +89,16 @@ class QuestionStruct{
 
             questionDTO.setCorrectAnswer(gson.toJson(options));
         }
-        else if(questionType == QuestionType.FILL_IN_THE_BLANK){
-            //填空题
-
-            String noUse = gson.toJson("not used");
-            questionDTO.setOptions(noUse);//不需要
-
-            if(blankAnswers == null || blankAnswers.isEmpty()) throw new NullPointerException("FILL_IN_THE_BLANK: blankAnswers is empty.");
-
-            correctAnswer = gson.toJson(blankAnswers);
-        }
+//        else if(questionType == QuestionType.FILL_IN_THE_BLANK){
+//            //填空题
+//
+//            String noUse = gson.toJson("not used");
+//            questionDTO.setOptions(noUse);//不需要
+//
+//            if(blankAnswers == null || blankAnswers.isEmpty()) throw new NullPointerException("FILL_IN_THE_BLANK: blankAnswers is empty.");
+//
+//            correctAnswer = gson.toJson(blankAnswers);
+//        }
         else{
             //简答题
 
