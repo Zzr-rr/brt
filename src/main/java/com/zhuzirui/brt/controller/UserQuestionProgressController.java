@@ -1,6 +1,7 @@
 package com.zhuzirui.brt.controller;
 
 import com.zhuzirui.brt.common.Result;
+import com.zhuzirui.brt.model.dto.BankInfoDTO;
 import com.zhuzirui.brt.model.dto.QuestionBankDTO;
 import com.zhuzirui.brt.model.dto.UserQuestionProgressDTO;
 import com.zhuzirui.brt.model.entity.Question;
@@ -14,10 +15,7 @@ import com.zhuzirui.brt.service.UserService;
 import com.zhuzirui.brt.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,4 +144,24 @@ public class UserQuestionProgressController {
 
         return Result.success(userQuestionProgressList);
     }
+
+    @GetMapping("/bankinfo/list")
+    public Result<List<BankInfoDTO>> listBankInfo(HttpServletRequest request) {
+        //鉴权
+        String jwtToken = getJwtTokenFromCookie(request);// 调用方法从 Cookie 中获取 JWT Token
+        Integer userId;
+        // 检查 JWT Token 是否存在
+        if (jwtToken != null && !jwtToken.isEmpty()) {
+            // 使用 JwtUtil 提取用户 ID
+            userId = jwtUtil.extractUserId(jwtToken);
+            User user = userService.getUserByUserId(userId);
+            if (user == null) return Result.error(404, "User not found");
+        } else {
+            // 如果没有 JWT Token，返回错误信息
+            return Result.error(401, "Invalid JWT token");
+        }
+
+        return Result.success(userQuestionProgressService.listBankInfo(userId));
+    }
+
 }

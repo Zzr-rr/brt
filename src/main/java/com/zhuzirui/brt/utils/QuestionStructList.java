@@ -2,8 +2,9 @@ package com.zhuzirui.brt.utils;
 
 import com.google.gson.Gson;
 import com.zhuzirui.brt.model.dto.QuestionDTO;
+import dev.langchain4j.model.output.structured.Description;
 import jakarta.validation.constraints.NotBlank;
-import jdk.jfr.Description;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

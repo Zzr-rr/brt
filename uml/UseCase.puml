@@ -1,0 +1,46 @@
+@startuml
+actor 用户 as user
+actor 管理员 as admin
+
+rectangle "做题速通平台" {
+  (登录) as uc1
+  (注册) as uc2
+  (知识文件上传) as uc3
+  (用户下载) as uc4
+  (题库生成) as uc8
+  (做题记录) as uc9
+  (错题本) as uc10
+  (个性化推荐) as uc11
+  (社区互动) as uc12
+  (数据分析) as uc13
+
+  (管理员上传知识题库) as uc5
+  (文件解析) as uc6
+  (题库结构化存储) as uc7
+
+  user -down-> uc1
+  user -down-> uc2
+  user -down-> uc3
+  user -down-> uc4
+  user -down-> uc8
+  user -down-> uc9
+  user -down-> uc10
+  user -down-> uc11
+  user -down-> uc12
+  user -down-> uc13
+
+  admin -down-> uc5
+  admin -down-> uc6
+  admin -down-> uc7
+
+  uc1 -down-> uc2 : <<include>>
+  uc3 -down-> uc6 : <<include>>
+  uc6 -down-> uc7 : <<include>>
+  uc7 -down-> uc8 : <<include>>
+  uc8 -down-> uc9 : <<include>>
+  uc9 -down-> uc10 : <<include>>
+  uc1 -down-> uc11 : <<extend>>
+  uc1 -down-> uc12 : <<extend>>
+  uc1 -down-> uc13 : <<extend>>
+}
+@enduml

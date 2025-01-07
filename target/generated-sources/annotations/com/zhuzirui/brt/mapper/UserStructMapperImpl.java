@@ -2,13 +2,13 @@ package com.zhuzirui.brt.mapper;
 
 import com.zhuzirui.brt.model.dto.UserDTO;
 import com.zhuzirui.brt.model.entity.User;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-01T13:23:57+0800",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23 (Oracle Corporation)"
+    date = "2025-01-08T00:00:28+0800",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.41.0.v20241217-1506, environment: Java 17.0.13 (Eclipse Adoptium)"
 )
 @Component
 public class UserStructMapperImpl implements UserStructMapper {
@@ -21,28 +21,28 @@ public class UserStructMapperImpl implements UserStructMapper {
 
         UserDTO userDTO = new UserDTO();
 
-        userDTO.setUserId( user.getUserId() );
-        userDTO.setUsername( user.getUsername() );
-        userDTO.setEmail( user.getEmail() );
-        userDTO.setPhoneNumber( user.getPhoneNumber() );
-        userDTO.setProfileImage( user.getProfileImage() );
-        userDTO.setFirstName( user.getFirstName() );
-        userDTO.setLastName( user.getLastName() );
-        userDTO.setDateOfBirth( user.getDateOfBirth() );
-        userDTO.setGender( user.getGender() );
         userDTO.setAddress( user.getAddress() );
+        userDTO.setBio( user.getBio() );
         userDTO.setCity( user.getCity() );
         userDTO.setCountry( user.getCountry() );
-        userDTO.setPostalCode( user.getPostalCode() );
         userDTO.setCreatedAt( user.getCreatedAt() );
-        userDTO.setUpdatedAt( user.getUpdatedAt() );
-        userDTO.setLastLogin( user.getLastLogin() );
+        userDTO.setDateOfBirth( user.getDateOfBirth() );
+        userDTO.setEmail( user.getEmail() );
+        userDTO.setFirstName( user.getFirstName() );
+        userDTO.setGender( user.getGender() );
         userDTO.setIsActive( user.getIsActive() );
-        userDTO.setIsVerified( user.getIsVerified() );
-        userDTO.setUserRole( user.getUserRole() );
-        userDTO.setPreferences( user.getPreferences() );
-        userDTO.setBio( user.getBio() );
         userDTO.setIsDeleted( user.getIsDeleted() );
+        userDTO.setIsVerified( user.getIsVerified() );
+        userDTO.setLastLogin( user.getLastLogin() );
+        userDTO.setLastName( user.getLastName() );
+        userDTO.setPhoneNumber( user.getPhoneNumber() );
+        userDTO.setPostalCode( user.getPostalCode() );
+        userDTO.setPreferences( user.getPreferences() );
+        userDTO.setProfileImage( user.getProfileImage() );
+        userDTO.setUpdatedAt( user.getUpdatedAt() );
+        userDTO.setUserId( user.getUserId() );
+        userDTO.setUserRole( user.getUserRole() );
+        userDTO.setUsername( user.getUsername() );
 
         return userDTO;
     }
@@ -55,28 +55,28 @@ public class UserStructMapperImpl implements UserStructMapper {
 
         User user = new User();
 
-        user.setUserId( dto.getUserId() );
-        user.setUsername( dto.getUsername() );
-        user.setEmail( dto.getEmail() );
-        user.setPhoneNumber( dto.getPhoneNumber() );
-        user.setProfileImage( dto.getProfileImage() );
-        user.setFirstName( dto.getFirstName() );
-        user.setLastName( dto.getLastName() );
-        user.setDateOfBirth( dto.getDateOfBirth() );
-        user.setGender( dto.getGender() );
         user.setAddress( dto.getAddress() );
+        user.setBio( dto.getBio() );
         user.setCity( dto.getCity() );
         user.setCountry( dto.getCountry() );
-        user.setPostalCode( dto.getPostalCode() );
         user.setCreatedAt( dto.getCreatedAt() );
-        user.setUpdatedAt( dto.getUpdatedAt() );
-        user.setLastLogin( dto.getLastLogin() );
+        user.setDateOfBirth( dto.getDateOfBirth() );
+        user.setEmail( dto.getEmail() );
+        user.setFirstName( dto.getFirstName() );
+        user.setGender( dto.getGender() );
         user.setIsActive( dto.getIsActive() );
-        user.setIsVerified( dto.getIsVerified() );
-        user.setUserRole( dto.getUserRole() );
-        user.setPreferences( dto.getPreferences() );
-        user.setBio( dto.getBio() );
         user.setIsDeleted( dto.getIsDeleted() );
+        user.setIsVerified( dto.getIsVerified() );
+        user.setLastLogin( dto.getLastLogin() );
+        user.setLastName( dto.getLastName() );
+        user.setPhoneNumber( dto.getPhoneNumber() );
+        user.setPostalCode( dto.getPostalCode() );
+        user.setPreferences( dto.getPreferences() );
+        user.setProfileImage( dto.getProfileImage() );
+        user.setUpdatedAt( dto.getUpdatedAt() );
+        user.setUserId( dto.getUserId() );
+        user.setUserRole( dto.getUserRole() );
+        user.setUsername( dto.getUsername() );
 
         return user;
     }

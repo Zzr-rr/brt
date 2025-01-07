@@ -1,14 +1,19 @@
 package com.zhuzirui.brt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhuzirui.brt.dao.QuestionBankMapper;
 import com.zhuzirui.brt.mapper.UserQuestionProgressStructMapper;
 import com.zhuzirui.brt.mapper.UserWrongQuestionStructMapper;
+import com.zhuzirui.brt.model.dto.BankInfoDTO;
+import com.zhuzirui.brt.model.dto.QuestionBankDTO;
 import com.zhuzirui.brt.model.dto.UserQuestionProgressDTO;
 import com.zhuzirui.brt.model.dto.UserWrongQuestionDTO;
 import com.zhuzirui.brt.model.entity.Question;
+import com.zhuzirui.brt.model.entity.QuestionBank;
 import com.zhuzirui.brt.model.entity.UserQuestionProgress;
 import com.zhuzirui.brt.dao.UserQuestionProgressMapper;
 import com.zhuzirui.brt.model.entity.UserWrongQuestion;
+import com.zhuzirui.brt.service.QuestionBankService;
 import com.zhuzirui.brt.service.QuestionService;
 import com.zhuzirui.brt.service.UserQuestionProgressService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,6 +48,12 @@ public class UserQuestionProgressServiceImpl extends ServiceImpl<UserQuestionPro
 
    @Autowired
    private UserWrongQuestionStructMapper userWrongQuestionStructMapper;
+
+   @Autowired
+   QuestionBankService questionBankService;
+
+   @Autowired
+   QuestionBankMapper questionBankMapper;
 
     @Override
     public boolean addUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) throws Exception {
@@ -107,5 +118,16 @@ public class UserQuestionProgressServiceImpl extends ServiceImpl<UserQuestionPro
             res.add(userQuestionProgress);
         }
         return res;
+    }
+
+    @Override
+    public List<BankInfoDTO> listBankInfo(Integer userId){
+
+        try{
+            return questionBankMapper.getBankInfoByUserId(userId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }

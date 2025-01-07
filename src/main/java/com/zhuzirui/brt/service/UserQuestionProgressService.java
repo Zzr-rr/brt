@@ -1,5 +1,6 @@
 package com.zhuzirui.brt.service;
 
+import com.zhuzirui.brt.model.dto.BankInfoDTO;
 import com.zhuzirui.brt.model.dto.UserQuestionProgressDTO;
 import com.zhuzirui.brt.model.entity.UserQuestionProgress;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -18,4 +19,5 @@ public interface UserQuestionProgressService extends IService<UserQuestionProgre
     boolean addUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) throws Exception;
     List<UserQuestionProgress> listUserQuestionProgress(UserQuestionProgressDTO userQuestionProgressDTO) ;
     List<UserQuestionProgress> listByBankId(Integer bankId);
+    List<BankInfoDTO> listBankInfo(Integer UserId);
 }

@@ -2,13 +2,13 @@ package com.zhuzirui.brt.mapper;
 
 import com.zhuzirui.brt.model.dto.QuestionDTO;
 import com.zhuzirui.brt.model.entity.Question;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-01T13:23:57+0800",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23 (Oracle Corporation)"
+    date = "2025-01-08T00:00:28+0800",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.41.0.v20241217-1506, environment: Java 17.0.13 (Eclipse Adoptium)"
 )
 @Component
 public class QuestionStructMapperImpl implements QuestionStructMapper {
@@ -21,16 +21,16 @@ public class QuestionStructMapperImpl implements QuestionStructMapper {
 
         QuestionDTO questionDTO = new QuestionDTO();
 
-        questionDTO.setQuestionId( questionBankStructMapper.getQuestionId() );
         questionDTO.setBankId( questionBankStructMapper.getBankId() );
+        questionDTO.setCorrectAnswer( questionBankStructMapper.getCorrectAnswer() );
+        questionDTO.setCreatedAt( questionBankStructMapper.getCreatedAt() );
+        questionDTO.setDifficulty( questionBankStructMapper.getDifficulty() );
+        questionDTO.setIsDeleted( questionBankStructMapper.getIsDeleted() );
+        questionDTO.setOptions( questionBankStructMapper.getOptions() );
+        questionDTO.setQuestionId( questionBankStructMapper.getQuestionId() );
         questionDTO.setQuestionText( questionBankStructMapper.getQuestionText() );
         questionDTO.setQuestionType( questionBankStructMapper.getQuestionType() );
-        questionDTO.setOptions( questionBankStructMapper.getOptions() );
-        questionDTO.setCorrectAnswer( questionBankStructMapper.getCorrectAnswer() );
-        questionDTO.setDifficulty( questionBankStructMapper.getDifficulty() );
-        questionDTO.setCreatedAt( questionBankStructMapper.getCreatedAt() );
         questionDTO.setUpdatedAt( questionBankStructMapper.getUpdatedAt() );
-        questionDTO.setIsDeleted( questionBankStructMapper.getIsDeleted() );
 
         return questionDTO;
     }
@@ -43,16 +43,16 @@ public class QuestionStructMapperImpl implements QuestionStructMapper {
 
         Question question = new Question();
 
-        question.setQuestionId( dto.getQuestionId() );
         question.setBankId( dto.getBankId() );
+        question.setCorrectAnswer( dto.getCorrectAnswer() );
+        question.setCreatedAt( dto.getCreatedAt() );
+        question.setDifficulty( dto.getDifficulty() );
+        question.setIsDeleted( dto.getIsDeleted() );
+        question.setOptions( dto.getOptions() );
+        question.setQuestionId( dto.getQuestionId() );
         question.setQuestionText( dto.getQuestionText() );
         question.setQuestionType( dto.getQuestionType() );
-        question.setOptions( dto.getOptions() );
-        question.setCorrectAnswer( dto.getCorrectAnswer() );
-        question.setDifficulty( dto.getDifficulty() );
-        question.setCreatedAt( dto.getCreatedAt() );
         question.setUpdatedAt( dto.getUpdatedAt() );
-        question.setIsDeleted( dto.getIsDeleted() );
 
         return question;
     }
