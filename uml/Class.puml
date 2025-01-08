@@ -1,0 +1,114 @@
+@startuml
+class User {
+    -id : int
+    -username : String
+    -email : String
+    -password : String
+    -phone : String
+    -role : String
+    +login() : boolean
+    +register() : boolean
+    +resetPassword() : boolean
+    +agreeToTerms() : boolean
+    +uploadFile(file : File) : boolean
+    +downloadFile(fileId : int) : boolean
+    +viewDownloadHistory() : List<File>
+    +startExercise() : boolean
+    +viewExerciseRecord() : ExerciseRecord
+    +viewWrongQuestionBook() : WrongQuestionBook
+}
+
+class Admin {
+    -id : int
+    -username : String
+    -password : String
+    +login() : boolean
+    +uploadQuestionBank(file : File) : boolean
+    +crawlQuestionBank(url : String) : boolean
+}
+
+class File {
+    -id : int
+    -name : String
+    -format : String
+    -content : String
+    -uploader : User
+    -uploadTime : Date
+    +parse() : List<Question>
+}
+
+class KnowledgeBank {
+    -id : int
+    -questions : List<Question>
+    +addQuestion(question : Question) : boolean
+    +removeQuestion(question : Question) : boolean
+    +search(keyword : String) : List<Question>
+    +generateExercise(user : User) : List<Question>
+}
+
+class Question {
+    -id : int
+    -content : String
+    -answer : String
+    -type : String
+    -difficulty : int
+    +isCorrect(userAnswer : String) : boolean
+}
+
+class ExerciseRecord {
+    -userId : int
+    -doneQuestions : List<Question>
+    -undoneQuestions : List<Question>
+    -wrongQuestions : List<Question>
+    +addRecord(question : Question, userAnswer : String) : boolean
+    +getHistory() : List<Question>
+}
+
+class WrongQuestionBook {
+    -userId : int
+    -wrongQuestions : List<Question>
+    +addQuestion(question : Question) : boolean
+    +removeQuestion(question : Question) : boolean
+    +markQuestion(question : Question) : boolean
+    +classifyQuestion(question : Question, category : String) : boolean
+    +review() : boolean
+}
+
+class RecommendationEngine {
+    -userId : int
+    +recommendResources() : List<File>
+    +createLearningPlan() : boolean
+}
+
+class Community {
+    -id : int
+    -users : List<User>
+    +postDiscussion(topic : String) : boolean
+    +replyDiscussion(postId : int, content : String) : boolean
+    +sendPrivateMessage(toUser : User, content : String) : boolean
+    +likePost(postId : int) : boolean
+    +commentOnPost(postId : int, content : String) : boolean
+}
+
+class DataAnalysis {
+    -userId : int
+    +analyzeExerciseData() : Report
+    +exportReport(format : String) : File
+}
+
+class Report {
+    -userId : int
+    -content : String
+    -format : String
+}
+
+User -right-> File : uploads
+User -right-> ExerciseRecord : has
+User -right-> WrongQuestionBook : has
+User -down-> RecommendationEngine : uses
+User -down-> Community : participates in
+User -down-> DataAnalysis : uses
+Admin -right-> KnowledgeBank : manages
+KnowledgeBank -right-> Question : contains
+KnowledgeBank -down-> Question : contains
+@enduml

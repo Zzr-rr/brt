@@ -4,6 +4,7 @@ import com.zhuzirui.brt.common.Result;
 import com.zhuzirui.brt.dao.CommunityInteractionMapper;
 import com.zhuzirui.brt.mapper.CommunityInteractionStructMapper;
 import com.zhuzirui.brt.model.dto.CommunityInteractionDTO;
+import com.zhuzirui.brt.model.dto.PostDTO;
 import com.zhuzirui.brt.model.entity.CommunityInteraction;
 import com.zhuzirui.brt.model.entity.User;
 import com.zhuzirui.brt.service.CommunityInteractionService;
@@ -47,6 +48,9 @@ public class CommunityInteractionController {
 
     @Autowired
     private CommunityInteractionStructMapper communityInteractionStructMapper;
+
+    @Autowired
+    private CommunityInteractionMapper communityInteractionMapper;
 
 
     @PostMapping("/post")
@@ -160,6 +164,11 @@ public class CommunityInteractionController {
         if(targetCommunityInteraction == null)
             return Result.error(404, "Target CommunityInteraction not found");
         return Result.success(communityInteractionService.listComments(targetId));
+    }
+
+    @GetMapping("/list/postinfo")
+    public Result<List<PostDTO>> listPostinfo() {
+        return Result.success(communityInteractionMapper.listPostInfo());
     }
 
 }

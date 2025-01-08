@@ -36,7 +36,7 @@ llm:
     model-name: Yi-34B-Chat
   openai:
     base-url: https://api.chatanywhere.tech/v1
-    secret-key: sk-45aHXQhjXoZJzXCZyuY2OjmAIhDHN9BnoN26nFTFdFgl7y1R
+    secret-key: sk-frn0ka8KALxQCJxCn0cXPul99jNCqG7WD3culhdAzs4JpiCt
     model-name: gpt-3.5-turbo
 
 
