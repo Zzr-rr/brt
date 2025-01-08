@@ -1,0 +1,94 @@
+@startuml
+participant Actor
+Actor -> FileController : create
+activate FileController
+FileController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> FileController
+deactivate JwtUtil
+FileController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> FileController
+deactivate JwtUtil
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> FileStructMapper : dtoToEntity
+activate FileStructMapper
+FileStructMapper --> FileController
+deactivate FileStructMapper
+FileController -> FileService : saveFile
+activate FileService
+FileService --> FileController
+deactivate FileService
+FileController -> FileStructMapper : entityToDto
+activate FileStructMapper
+FileStructMapper --> FileController
+deactivate FileStructMapper
+FileController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+return
+@enduml

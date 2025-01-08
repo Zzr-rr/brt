@@ -1,0 +1,74 @@
+@startuml
+participant Actor
+Actor -> SourceController : upload
+activate SourceController
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> FileUploadService : uploadFile
+activate FileUploadService
+FileUploadService --> SourceController
+deactivate FileUploadService
+SourceController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+SourceController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> SourceController
+deactivate Result
+return
+@enduml

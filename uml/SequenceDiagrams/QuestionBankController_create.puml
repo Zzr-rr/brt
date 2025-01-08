@@ -1,0 +1,174 @@
+@startuml
+participant Actor
+Actor -> QuestionBankController : create
+activate QuestionBankController
+QuestionBankController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> QuestionBankController
+deactivate JwtUtil
+QuestionBankController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> QuestionBankController
+deactivate JwtUtil
+QuestionBankController -> UserService : getUserByUserId
+activate UserService
+UserService --> QuestionBankController
+deactivate UserService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> FileService : getFileContentByFileId
+activate FileService
+FileService --> QuestionBankController
+deactivate FileService
+QuestionBankController -> DocumentToTextProcessingService : convertToText
+activate DocumentToTextProcessingService
+DocumentToTextProcessingService --> QuestionBankController
+deactivate DocumentToTextProcessingService
+QuestionBankController -> QuestionBankStructMapper : dtoToEntity
+activate QuestionBankStructMapper
+QuestionBankStructMapper --> QuestionBankController
+deactivate QuestionBankStructMapper
+QuestionBankController -> QuestionBankService : saveQuestionBank
+activate QuestionBankService
+QuestionBankService --> QuestionBankController
+deactivate QuestionBankService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> QuestionExtractorService : extractQuestions
+activate QuestionExtractorService
+QuestionExtractorService --> QuestionBankController
+deactivate QuestionExtractorService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> QuestionStructMapper : dtoToEntity
+activate QuestionStructMapper
+QuestionStructMapper --> QuestionBankController
+deactivate QuestionStructMapper
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+return
+@enduml

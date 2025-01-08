@@ -1,0 +1,46 @@
+@startuml
+participant Actor
+Actor -> UserController : info
+activate UserController
+UserController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> UserController
+deactivate JwtUtil
+UserController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> UserController
+deactivate JwtUtil
+UserController -> UserService : getUserByUserId
+activate UserService
+UserService --> UserController
+deactivate UserService
+UserController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserController
+deactivate Result
+UserController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserController
+deactivate Result
+UserController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserController
+deactivate Result
+return
+@enduml

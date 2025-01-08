@@ -1,0 +1,78 @@
+@startuml
+participant Actor
+Actor -> FileController : update
+activate FileController
+FileController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> FileController
+deactivate JwtUtil
+FileController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> FileController
+deactivate JwtUtil
+FileController -> UserService : getUserByUserId
+activate UserService
+UserService --> FileController
+deactivate UserService
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> FileService : getFileByFileId
+activate FileService
+FileService --> FileController
+deactivate FileService
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+FileController -> FileService : updateFile
+activate FileService
+FileService --> FileController
+deactivate FileService
+FileController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> FileController
+deactivate Result
+return
+@enduml

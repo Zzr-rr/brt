@@ -1,0 +1,74 @@
+@startuml
+participant Actor
+Actor -> CommunityInteractionController : comment
+activate CommunityInteractionController
+CommunityInteractionController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> CommunityInteractionController
+deactivate JwtUtil
+CommunityInteractionController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> CommunityInteractionController
+deactivate JwtUtil
+CommunityInteractionController -> UserService : getUserByUserId
+activate UserService
+UserService --> CommunityInteractionController
+deactivate UserService
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> CommunityInteractionStructMapper : dtoToEntity
+activate CommunityInteractionStructMapper
+CommunityInteractionStructMapper --> CommunityInteractionController
+deactivate CommunityInteractionStructMapper
+CommunityInteractionController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+return
+@enduml

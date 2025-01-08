@@ -1,0 +1,6 @@
+@startuml
+participant Actor
+Actor -> UserQuestionProgressController : delete
+activate UserQuestionProgressController
+return
+@enduml

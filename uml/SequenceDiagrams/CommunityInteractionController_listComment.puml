@@ -1,0 +1,34 @@
+@startuml
+participant Actor
+Actor -> CommunityInteractionController : listComment
+activate CommunityInteractionController
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+CommunityInteractionController -> CommunityInteractionService : listComments
+activate CommunityInteractionService
+CommunityInteractionService --> CommunityInteractionController
+deactivate CommunityInteractionService
+CommunityInteractionController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+return
+@enduml

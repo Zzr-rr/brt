@@ -1,0 +1,35 @@
+@startuml
+participant Actor
+Actor -> SourceController : download
+activate SourceController
+SourceController -> FileUploadService : downloadFile
+activate FileUploadService
+FileUploadService --> SourceController
+deactivate FileUploadService
+create DownloadHistoryDTO
+SourceController -> DownloadHistoryDTO : new
+activate DownloadHistoryDTO
+DownloadHistoryDTO --> SourceController
+deactivate DownloadHistoryDTO
+SourceController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> SourceController
+deactivate JwtUtil
+SourceController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> SourceController
+deactivate JwtUtil
+SourceController -> DownloadHistoryStructMapper : dtoToEntity
+activate DownloadHistoryStructMapper
+DownloadHistoryStructMapper --> SourceController
+deactivate DownloadHistoryStructMapper
+SourceController -> DownloadHistoryService : saveDownloadHistory
+activate DownloadHistoryService
+DownloadHistoryService --> SourceController
+deactivate DownloadHistoryService
+return
+@enduml

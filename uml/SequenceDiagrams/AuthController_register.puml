@@ -1,0 +1,46 @@
+@startuml
+participant Actor
+Actor -> AuthController : register
+activate AuthController
+AuthController -> UserService : getByEmail
+activate UserService
+UserService --> AuthController
+deactivate UserService
+AuthController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> AuthController
+deactivate Result
+AuthController -> UserStructMapper : dtoToEntity
+activate UserStructMapper
+UserStructMapper --> AuthController
+deactivate UserStructMapper
+AuthController -> UserService : saveUser
+activate UserService
+UserService --> AuthController
+deactivate UserService
+AuthController -> JwtUtil : generateToken
+activate JwtUtil
+JwtUtil --> AuthController
+deactivate JwtUtil
+AuthController -> AuthController : setJwtCookie
+activate AuthController
+AuthController --> AuthController
+deactivate AuthController
+AuthController -> UserStructMapper : entityToDto
+activate UserStructMapper
+UserStructMapper --> AuthController
+deactivate UserStructMapper
+AuthController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> AuthController
+deactivate Result
+return
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+participant Actor
+Actor -> UserQuestionProgressController : listBankInfo
+activate UserQuestionProgressController
+UserQuestionProgressController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> UserQuestionProgressController
+deactivate JwtUtil
+UserQuestionProgressController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> UserQuestionProgressController
+deactivate JwtUtil
+UserQuestionProgressController -> UserService : getUserByUserId
+activate UserService
+UserService --> UserQuestionProgressController
+deactivate UserService
+UserQuestionProgressController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserQuestionProgressController
+deactivate Result
+UserQuestionProgressController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserQuestionProgressController
+deactivate Result
+UserQuestionProgressController -> UserQuestionProgressService : listBankInfo
+activate UserQuestionProgressService
+UserQuestionProgressService --> UserQuestionProgressController
+deactivate UserQuestionProgressService
+UserQuestionProgressController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserQuestionProgressController
+deactivate Result
+return
+@enduml

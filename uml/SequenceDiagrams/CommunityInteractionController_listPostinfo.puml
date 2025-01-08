@@ -1,0 +1,18 @@
+@startuml
+participant Actor
+Actor -> CommunityInteractionController : listPostinfo
+activate CommunityInteractionController
+CommunityInteractionController -> CommunityInteractionMapper : listPostInfo
+activate CommunityInteractionMapper
+CommunityInteractionMapper --> CommunityInteractionController
+deactivate CommunityInteractionMapper
+CommunityInteractionController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> CommunityInteractionController
+deactivate Result
+return
+@enduml

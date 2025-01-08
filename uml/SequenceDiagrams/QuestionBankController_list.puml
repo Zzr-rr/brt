@@ -1,0 +1,66 @@
+@startuml
+participant Actor
+Actor -> QuestionBankController : list
+activate QuestionBankController
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> QuestionBankController
+deactivate JwtUtil
+QuestionBankController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> QuestionBankController
+deactivate JwtUtil
+QuestionBankController -> UserService : getUserByUserId
+activate UserService
+UserService --> QuestionBankController
+deactivate UserService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> QuestionBankService : listQuestionBanks
+activate QuestionBankService
+QuestionBankService --> QuestionBankController
+deactivate QuestionBankService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+return
+@enduml

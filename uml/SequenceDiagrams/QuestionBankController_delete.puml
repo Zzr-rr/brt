@@ -1,0 +1,82 @@
+@startuml
+participant Actor
+Actor -> QuestionBankController : delete
+activate QuestionBankController
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> QuestionBankController
+deactivate JwtUtil
+QuestionBankController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> QuestionBankController
+deactivate JwtUtil
+QuestionBankController -> UserService : getUserByUserId
+activate UserService
+UserService --> QuestionBankController
+deactivate UserService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> QuestionService : removeByBankId
+activate QuestionService
+QuestionService --> QuestionBankController
+deactivate QuestionService
+QuestionBankController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+QuestionBankController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> QuestionBankController
+deactivate Result
+return
+@enduml

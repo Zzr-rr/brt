@@ -1,0 +1,74 @@
+@startuml
+participant Actor
+Actor -> UserWrongQuestionController : update
+activate UserWrongQuestionController
+UserWrongQuestionController -> JwtUtil : getJwtTokenFromCookie
+activate JwtUtil
+JwtUtil --> UserWrongQuestionController
+deactivate JwtUtil
+UserWrongQuestionController -> JwtUtil : extractUserId
+activate JwtUtil
+JwtUtil -> JwtUtil : extractAllClaims
+activate JwtUtil
+JwtUtil --> JwtUtil
+deactivate JwtUtil
+JwtUtil --> UserWrongQuestionController
+deactivate JwtUtil
+UserWrongQuestionController -> UserService : getUserByUserId
+activate UserService
+UserService --> UserWrongQuestionController
+deactivate UserService
+UserWrongQuestionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserWrongQuestionController
+deactivate Result
+UserWrongQuestionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserWrongQuestionController
+deactivate Result
+UserWrongQuestionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserWrongQuestionController
+deactivate Result
+UserWrongQuestionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserWrongQuestionController
+deactivate Result
+UserWrongQuestionController -> ReviewStatus : valueOf
+activate ReviewStatus
+ReviewStatus --> UserWrongQuestionController
+deactivate ReviewStatus
+UserWrongQuestionController -> Result : error
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserWrongQuestionController
+deactivate Result
+UserWrongQuestionController -> Result : success
+activate Result
+Result -> Result : new
+activate Result
+Result --> Result
+deactivate Result
+Result --> UserWrongQuestionController
+deactivate Result
+return
+@enduml
