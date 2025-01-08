@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import static com.zhuzirui.brt.utils.JwtUtil.getJwtTokenFromCookie;
@@ -74,6 +76,9 @@ public class QuestionBankController {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     @Autowired
     UserService userService;
 
@@ -106,7 +111,6 @@ public class QuestionBankController {
     }
 
 
-    @Async
     public void generateAndSaveQuestions(QuestionBankDTO questionBankDTO, List<Integer> fileIdList, Integer userId, Integer questionBankId) {
         StringBuilder text = new StringBuilder();
         for (Integer fileId : fileIdList) {
@@ -131,6 +135,7 @@ public class QuestionBankController {
             return;
         }
 
+        // 保存问题
         List<Question> questionSavedList = new ArrayList<>();
         for (QuestionDTO questionDTO : questionDTOList) {
             questionDTO.setBankId(questionBankId);
@@ -169,7 +174,6 @@ public class QuestionBankController {
             return Result.error(401, "Invalid JWT token");
         }
 
-        // 检查所需信息
         if (fileIdList == null || fileIdList.isEmpty()) return Result.error(500, "need at least one file");
         if (questionBankDTO == null) return Result.error(500, "need more information");
         if (questionBankDTO.getTitle() == null || questionBankDTO.getTitle().isEmpty())
@@ -194,7 +198,7 @@ public class QuestionBankController {
             return Result.error(500, e.getMessage());
         }
 
-        generateAndSaveQuestions(questionBankDTO, fileIdList, userId, questionBankId);
+        executorService.submit(() -> generateAndSaveQuestions(questionBankDTO, fileIdList, userId, questionBankId));
 
         return Result.success(questionBank);
     }
