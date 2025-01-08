@@ -24,6 +24,7 @@ public class QuestionBankDTO {
 
     private Boolean isPublic;
     private Boolean isDeleted;
+    private Boolean isCompleted; // 是否生成完成
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

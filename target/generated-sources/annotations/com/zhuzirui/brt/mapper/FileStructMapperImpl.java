@@ -2,13 +2,13 @@ package com.zhuzirui.brt.mapper;
 
 import com.zhuzirui.brt.model.dto.FileDTO;
 import com.zhuzirui.brt.model.entity.File;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-08T00:00:28+0800",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.41.0.v20241217-1506, environment: Java 17.0.13 (Eclipse Adoptium)"
+    date = "2025-01-08T22:54:20+0800",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23 (Oracle Corporation)"
 )
 @Component
 public class FileStructMapperImpl implements FileStructMapper {
@@ -21,17 +21,17 @@ public class FileStructMapperImpl implements FileStructMapper {
 
         FileDTO fileDTO = new FileDTO();
 
-        fileDTO.setCreatedAt( user.getCreatedAt() );
         fileDTO.setFileId( user.getFileId() );
+        fileDTO.setUserId( user.getUserId() );
         fileDTO.setFileName( user.getFileName() );
-        fileDTO.setFileType( user.getFileType() );
-        fileDTO.setFileUrl( user.getFileUrl() );
-        fileDTO.setIsDeleted( user.getIsDeleted() );
         fileDTO.setIsPublic( user.getIsPublic() );
         fileDTO.setKeywords( user.getKeywords() );
+        fileDTO.setFileType( user.getFileType() );
+        fileDTO.setFileUrl( user.getFileUrl() );
         fileDTO.setUpdatedAt( user.getUpdatedAt() );
         fileDTO.setUploadTime( user.getUploadTime() );
-        fileDTO.setUserId( user.getUserId() );
+        fileDTO.setCreatedAt( user.getCreatedAt() );
+        fileDTO.setIsDeleted( user.getIsDeleted() );
 
         return fileDTO;
     }
@@ -44,17 +44,17 @@ public class FileStructMapperImpl implements FileStructMapper {
 
         File file = new File();
 
-        file.setCreatedAt( dto.getCreatedAt() );
         file.setFileId( dto.getFileId() );
+        file.setUserId( dto.getUserId() );
         file.setFileName( dto.getFileName() );
         file.setFileType( dto.getFileType() );
         file.setFileUrl( dto.getFileUrl() );
-        file.setIsDeleted( dto.getIsDeleted() );
+        file.setUploadTime( dto.getUploadTime() );
         file.setIsPublic( dto.getIsPublic() );
         file.setKeywords( dto.getKeywords() );
+        file.setCreatedAt( dto.getCreatedAt() );
         file.setUpdatedAt( dto.getUpdatedAt() );
-        file.setUploadTime( dto.getUploadTime() );
-        file.setUserId( dto.getUserId() );
+        file.setIsDeleted( dto.getIsDeleted() );
 
         return file;
     }

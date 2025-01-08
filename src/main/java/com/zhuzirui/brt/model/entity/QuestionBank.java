@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -60,6 +61,13 @@ public class QuestionBank implements Serializable {
     private Boolean isPublic;
 
     /**
+     * 题库是否已经完成
+     */
+    @TableField(value = "is_completed")
+    private Boolean isCompleted; // 是否生成完成
+
+
+    /**
      * 题库的关键词，供搜索使用
      */
     @TableField("keywords")
@@ -70,6 +78,7 @@ public class QuestionBank implements Serializable {
      */
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
+
 
     /**
      * 题库最近一次更新时间

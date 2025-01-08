@@ -2,13 +2,13 @@ package com.zhuzirui.brt.mapper;
 
 import com.zhuzirui.brt.model.dto.CommunityInteractionDTO;
 import com.zhuzirui.brt.model.entity.CommunityInteraction;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-08T00:00:28+0800",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.41.0.v20241217-1506, environment: Java 17.0.13 (Eclipse Adoptium)"
+    date = "2025-01-08T22:54:20+0800",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23 (Oracle Corporation)"
 )
 @Component
 public class CommunityInteractionStructMapperImpl implements CommunityInteractionStructMapper {
@@ -21,15 +21,15 @@ public class CommunityInteractionStructMapperImpl implements CommunityInteractio
 
         CommunityInteractionDTO communityInteractionDTO = new CommunityInteractionDTO();
 
-        communityInteractionDTO.setContent( communityInteraction.getContent() );
-        communityInteractionDTO.setCreatedAt( communityInteraction.getCreatedAt() );
         communityInteractionDTO.setInteractionId( communityInteraction.getInteractionId() );
-        communityInteractionDTO.setIsDeleted( communityInteraction.getIsDeleted() );
-        communityInteractionDTO.setLikesCount( communityInteraction.getLikesCount() );
-        communityInteractionDTO.setTargetId( communityInteraction.getTargetId() );
-        communityInteractionDTO.setType( communityInteraction.getType() );
-        communityInteractionDTO.setUpdatedAt( communityInteraction.getUpdatedAt() );
         communityInteractionDTO.setUserId( communityInteraction.getUserId() );
+        communityInteractionDTO.setContent( communityInteraction.getContent() );
+        communityInteractionDTO.setType( communityInteraction.getType() );
+        communityInteractionDTO.setTargetId( communityInteraction.getTargetId() );
+        communityInteractionDTO.setLikesCount( communityInteraction.getLikesCount() );
+        communityInteractionDTO.setCreatedAt( communityInteraction.getCreatedAt() );
+        communityInteractionDTO.setUpdatedAt( communityInteraction.getUpdatedAt() );
+        communityInteractionDTO.setIsDeleted( communityInteraction.getIsDeleted() );
 
         return communityInteractionDTO;
     }
@@ -42,15 +42,15 @@ public class CommunityInteractionStructMapperImpl implements CommunityInteractio
 
         CommunityInteraction communityInteraction = new CommunityInteraction();
 
-        communityInteraction.setContent( dto.getContent() );
-        communityInteraction.setCreatedAt( dto.getCreatedAt() );
         communityInteraction.setInteractionId( dto.getInteractionId() );
-        communityInteraction.setIsDeleted( dto.getIsDeleted() );
-        communityInteraction.setLikesCount( dto.getLikesCount() );
-        communityInteraction.setTargetId( dto.getTargetId() );
-        communityInteraction.setType( dto.getType() );
-        communityInteraction.setUpdatedAt( dto.getUpdatedAt() );
         communityInteraction.setUserId( dto.getUserId() );
+        communityInteraction.setContent( dto.getContent() );
+        communityInteraction.setType( dto.getType() );
+        communityInteraction.setTargetId( dto.getTargetId() );
+        communityInteraction.setCreatedAt( dto.getCreatedAt() );
+        communityInteraction.setLikesCount( dto.getLikesCount() );
+        communityInteraction.setUpdatedAt( dto.getUpdatedAt() );
+        communityInteraction.setIsDeleted( dto.getIsDeleted() );
 
         return communityInteraction;
     }
